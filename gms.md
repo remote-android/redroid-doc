@@ -1,3 +1,7 @@
 # GMS support in ReDroid
-TODO
 
+## Open GApps
+[Open GApps](https://opengapps.org/)
+
+## microG
+[microG](https://microg.org/)
