@@ -4,7 +4,7 @@ English | [简体中文](zh/)
 **ReDroid** (Remote Android) is a lightweight GPU accelerated Android Emulator. You can boot many 
 instances in Linux host or any Linux container envrionments (`Docker`, `K8S`, `LXC` etc.). 
 *ReDroid* supports both arm64 and x86_64 architectures. You can connect to *ReDroid* througth 
-`VNC` or `WebRTC` (TODO) or `adb shell`. *ReDroid* is suitable for Cloud Gaming, 
+`VNC` or `scrcpy` / `sndcpy` or `WebRTC` (TODO) or `adb shell`. *ReDroid* is suitable for Cloud Gaming, 
 VDI / VMI (Virtual Mobile Infurstrure), Automation Test and more.
 
 Currently supported:
@@ -22,13 +22,20 @@ check [kernel modules](https://github.com/remote-android/redroid-modules) for mo
 # install kernel modules
 sudo bash -c "`curl -s https://raw.githubusercontent.com/remote-android/redroid-modules/master/deploy/build.sh`"
 
-# start ReDroid instance
-docker run -v ~/data:/data -itd -p 5900:5900 -p 5555:5555 --rm --memory-swappiness=0 --privileged redroid/redroid:10.0.0-latest
+# start ReDroid instance and connect via VNC
+docker run -v ~/data:/data -d -p 5900:5900 -p 5555:5555 --rm --memory-swappiness=0 --privileged redroid/redroid:10.0.0-latest redroid.vncserver=1
 
 ## explains:
 ## -v ~/data:/data  -- mount data partition
 ## -p 5900:5900 -- 5900 for VNC connect, you can connect via VncViewer with <IP>:5900
 ## -p 5555:5555 -- 5555 for adb connect, you can run `adb connect localhost`
+
+
+# OR start ReDroid instance and connect via `scrcpy` (Performance boost, *recommended*)
+docker run -v ~/data:/data -d -p 5555:5555 --rm --memory-swappiness=0 --privileged redroid/redroid:10.0.0-latest
+adb connect <IP>:5555
+scrcpy --serial <IP>:5555
+
 ```
 
 ## Start Params
@@ -41,6 +48,9 @@ display params
 - redroid.height=1280
 - redroid.fps=15
 - ro.sf.lcd_density=320
+
+VNC server
+- redroid.vncserver=[0|1]
 
 GPU accelerating
 *ReDroid* use mesa3d to accelerate 3D rendering.
@@ -59,7 +69,7 @@ you can get root adb shell by default.
 - Package Manager
 
 ## Native Bridge
-It's possible to run Arm Apps in x64 *ReDroid* instance with `libhoudini`, `libndk_translator` or `Qemu translater`
+It's possible to run Arm Apps in x64 *ReDroid* instance with `libhoudini`, `libndk_translator` or `Qemu translator`
 
 Check [Native Bridge](./native_bridge) for more.
 
