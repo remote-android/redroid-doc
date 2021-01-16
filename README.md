@@ -57,6 +57,12 @@ GPU accelerating
 - qemu.gles.vendor=mesa
 - ro.hardware.gralloc=minigbm
 
+Virtual WiFi [Experiment in ReDroid 10]
+- ro.kernel.qemu.wifi=1
+Virtual WiFi is still under development, make sure `mac80211_hwsim` exist (`modprobe mac80211_hwsim`).
+checkout `redroid-10-wifi` in `vendor/redroid` and `redroid-10.0.0` in `device/generic/goldfish` to make
+your build. run `docker exec <container> ip r add default via 192.168.232.1 dev wlan0`
+
 you can override system props prefixed with `qemu.` or `ro.`. for example, you can set `ro.secure=0`, then 
 you can get root adb shell by default.
 
