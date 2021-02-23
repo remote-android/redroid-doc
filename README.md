@@ -8,6 +8,7 @@ instances in Linux host or any Linux container envrionments (`Docker`, `K8S`, `L
 VDI / VMI (Virtual Mobile Infurstrure), Automation Test and more.
 
 Currently supported:
+- Android S Preview (build by yourself)
 - Android 11 (`redroid/redroid:11.0.0-latest`, `redroid/redroid:11.0.0-amd64`, `redroid/redroid:11.0.0-arm64`)
 - Android 10 (`redroid/redroid:10.0.0-latest`, `redroid/redroid:10.0.0-amd64`, `redroid/redroid:10.0.0-arm64`)
 - Android 9 (`redroid/redroid:9.0.0-latest`, `redroid/redroid:9.0.0-amd64`, `redroid/redroid:9.0.0-arm64`)
