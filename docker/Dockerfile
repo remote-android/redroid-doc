@@ -16,6 +16,7 @@ RUN curl -o /usr/local/bin/repo https://storage.googleapis.com/git-repo-download
 
 RUN groupadd -g $groupid $username \
  && useradd -m -u $userid -g $groupid $username \
+ && echo "$username ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers \
  && echo $username >/root/username \
  && echo "$username:$username" | chpasswd && adduser $username sudo
 
