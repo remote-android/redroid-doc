@@ -24,7 +24,13 @@ check [kernel modules](https://github.com/remote-android/redroid-modules) for mo
 sudo bash -c "`curl -s https://raw.githubusercontent.com/remote-android/redroid-modules/master/deploy/build.sh`"
 
 # start ReDroid instance and connect via VNC
-docker run -v ~/data:/data -d -p 5900:5900 -p 5555:5555 --rm --memory-swappiness=0 --privileged redroid/redroid:10.0.0-latest redroid.vncserver=1
+docker run --rm -d \
+    --privileged \
+    -v ~/data:/data\
+    -p 5900:5900 \
+    -p 5555:5555 \
+    --memory-swappiness=0 \
+    redroid/redroid:10.0.0-latest redroid.vncserver=1
 
 ## explains:
 ## -v ~/data:/data  -- mount data partition
@@ -33,7 +39,13 @@ docker run -v ~/data:/data -d -p 5900:5900 -p 5555:5555 --rm --memory-swappiness
 
 
 # OR start ReDroid instance and connect via `scrcpy` (Performance boost, *recommended*)
-docker run -v ~/data:/data -d -p 5555:5555 --rm --memory-swappiness=0 --privileged redroid/redroid:10.0.0-latest
+docker run --rm -d \
+    --privileged \
+    -v ~/data:/data \
+    -p 5555:5555 \
+    --memory-swappiness=0 \
+    redroid/redroid:10.0.0-latest
+
 adb connect <IP>:5555
 scrcpy --serial <IP>:5555
 
