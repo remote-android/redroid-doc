@@ -1,10 +1,10 @@
 English | [简体中文](zh/)
 
 # ReDroid
-**ReDroid** (Remote Android) is a lightweight GPU accelerated Android Emulator. You can boot many 
+**ReDroid** (Remote Android) is a GPU accelerated AIC (Android In Container) solution. You can boot many
 instances in Linux host or any Linux container envrionments (`Docker`, `K8S`, `LXC` etc.). 
-*ReDroid* supports both arm64 and x86_64 architectures. You can connect to *ReDroid* througth 
-`VNC` or `scrcpy` / `sndcpy` or `WebRTC` (TODO) or `adb shell`. *ReDroid* is suitable for Cloud Gaming, 
+*ReDroid* supports both arm64 and amd64 architectures. You can connect to *ReDroid* througth
+`VNC` or `scrcpy` / `sndcpy` or `WebRTC` (Panned) or `adb shell`. *ReDroid* is suitable for Cloud Gaming,
 VDI / VMI (Virtual Mobile Infurstrure), Automation Test and more.
 
 Currently supported:
@@ -14,28 +14,40 @@ Currently supported:
 - Android 9 (`redroid/redroid:9.0.0-latest`, `redroid/redroid:9.0.0-amd64`, `redroid/redroid:9.0.0-arm64`)
 - Android 8.1 (`redroid/redroid:8.1.0-latest`, `redroid/redroid:8.1.0-amd64`, `redroid/redroid:8.1.0-arm64`)
 
+**pull first, otherwise your running image may out of date; check image SHA**
+
+Tested Platforms:
+- Ubuntu 16.04 / 18.04 / 20.04 (amd64 / arm64)
+- Amazon Linux 2 (amd64 / arm64)
+- Alibaba Cloud Linux 2 (amd64)
+- WSL 2 (Ubuntu) (amd64)
 
 ## Quick Start
-*ReDroid* runs on modern linux (kernel 4.14+), and require some Android specific modules (binder, ashmem at least) 
-check [kernel modules](https://github.com/remote-android/redroid-modules) for more.
+*ReDroid* runs on modern linux (kernel 4.14+), and require some Android specific modules (binder, ashmem etc.)
+check [kernel modules](https://github.com/remote-android/redroid-modules) to install these required kernel modules.
 
 ```bash
-# install kernel modules
-sudo bash -c "`curl -s https://raw.githubusercontent.com/remote-android/redroid-modules/master/deploy/build.sh`"
+# start and connect via `scrcpy` (Performance boost, *recommended*)
+docker run -itd --rm --memory-swappiness=0 --privileged\
+	-v ~/data:/data \
+	-p 5555:5555 \
+	redroid/redroid:10.0.0-latest
 
-# start ReDroid instance and connect via VNC
-docker run -v ~/data:/data -d -p 5900:5900 -p 5555:5555 --rm --memory-swappiness=0 --privileged redroid/redroid:10.0.0-latest redroid.vncserver=1
+adb connect <IP>:5555
+scrcpy --serial <IP>:5555
 
 ## explains:
 ## -v ~/data:/data  -- mount data partition
+## -p 5555:5555 -- 5555 for adb connect, you can run `adb connect <IP>`
+
+# start with built-in VNC support (debug only)
+docker run -itd --rm --memory-swappiness=0 --privileged \
+	-v ~/data:/data  \
+	-p 5900:5900 -p 5555:5555 \
+	redroid/redroid:10.0.0-latest redroid.vncserver=1
+
+## explains:
 ## -p 5900:5900 -- 5900 for VNC connect, you can connect via VncViewer with <IP>:5900
-## -p 5555:5555 -- 5555 for adb connect, you can run `adb connect localhost`
-
-
-# OR start ReDroid instance and connect via `scrcpy` (Performance boost, *recommended*)
-docker run -v ~/data:/data -d -p 5555:5555 --rm --memory-swappiness=0 --privileged redroid/redroid:10.0.0-latest
-adb connect <IP>:5555
-scrcpy --serial <IP>:5555
 
 ```
 
@@ -56,7 +68,7 @@ VNC server
 GPU accelerating
 *ReDroid* use mesa3d to accelerate 3D rendering.
 - qemu.gles.vendor=mesa
-- ro.hardware.gralloc=minigbm
+- ro.hardware.gralloc=gbm (Android O use minigbm, will change to gbm soon)
 
 Virtual WiFi [Experiment in ReDroid 10]
 - ro.kernel.qemu.wifi=1
@@ -71,9 +83,9 @@ you can get root adb shell by default.
 *ReDroid* support different deploy methods, check [Deploy](./deploy.md) for more details.
 - Docker
 - K8S
-- virsh-lxc / lxd
-- kata-runtime (microVM)
-- Package Manager
+- virsh-lxc / lxd (Planned)
+- kata-runtime (microVM, Planned)
+- Package Manager (Planned)
 
 ## Native Bridge
 It's possible to run Arm Apps in x64 *ReDroid* instance with `libhoudini`, `libndk_translator` or `Qemu translator`
@@ -95,8 +107,6 @@ Same as AOSP building process. check [AOSP setup](https://source.android.com/set
 Check [ReDroid build](./build.md) for more.
 
 ## Troubleshooting
-- cannot connect to network (cannot `ping`)
-    - `adb shell boot_completed.redroid.sh`
 - VNC screen hang
     - try `stop vncserver && start vncserver`
     - or reboot *ReDroid* instance `docker restart ...`
@@ -109,11 +119,16 @@ Check [ReDroid build](./build.md) for more.
 Contributing is always welcome (especially the `HAL` part). check [Contributing](./contributing.md) for more
 
 ## Workarounds
+- Kernel 5.7+, need enable `binderfs` / `ashmem`
 - SElinux is disabled in *ReDroid*; possible enabled with [selinuxns POC](http://namei.org/presentations/selinux_namespacing_lca2018.pdf)
 - sdcardfs currently not implemented, use `fuse` instead; may need run `modprobe fuse` first in some OS (AmazonLinux2?)
 - CGroups errors ignored; some cgroups path not same with generic linux, and some (`stune` for example) not supported
 - `procfs` not fully seperated with host OS; community use `lxcfs` and some cloud vendor ([TencentOS](https://github.com/Tencent/TencentOS-kernel)) enhanced in their own kernel.
 - vintf verify disabled (since no kernel)
+
+## Contacts
+- ziyang.zhou@outlook.com
+- remote-android.slack.com (invite link: https://join.slack.com/t/remote-android/shared_invite/zt-q40byk2o-YHUgWXmNIUC1nweQj0L9gA)
 
 ## License
 *ReDroid* itself is under [Apache License](https://www.apache.org/licenses/LICENSE-2.0), since *ReDroid* includes 
