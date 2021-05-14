@@ -68,9 +68,9 @@ VNC server
 GPU accelerating
 *ReDroid* use mesa3d to accelerate 3D rendering.
 - qemu.gles.vendor=mesa
-- ro.hardware.gralloc=gbm (Android O use minigbm, will change to gbm soon)
+- ro.hardware.gralloc=gbm
 
-Virtual WiFi [Experiment in ReDroid 10]
+Virtual WiFi (Experiment in ReDroid 10, *build broken, fix soon*)
 - ro.kernel.qemu.wifi=1
 Virtual WiFi is still under development, make sure `mac80211_hwsim` exist (`modprobe mac80211_hwsim`).
 checkout `redroid-10-wifi` in `vendor/redroid` and `redroid-10.0.0` in `device/generic/goldfish` to make
