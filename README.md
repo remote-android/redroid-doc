@@ -20,6 +20,7 @@ Tested Platforms:
 - Ubuntu 16.04 / 18.04 / 20.04 (amd64 / arm64)
 - Amazon Linux 2 (amd64 / arm64)
 - Alibaba Cloud Linux 2 (amd64)
+- Alibaba Cloud Linux 3 (amd64 / arm64) with `podman-docker`
 - WSL 2 (Ubuntu) (amd64)
 
 ## Quick Start
@@ -28,7 +29,7 @@ check [kernel modules](https://github.com/remote-android/redroid-modules) to ins
 
 ```bash
 # start and connect via `scrcpy` (Performance boost, *recommended*)
-docker run -itd --rm --memory-swappiness=0 --privileged\
+docker run -itd --rm --memory-swappiness=0 --privileged \
 	-v ~/data:/data \
 	-p 5555:5555 \
 	redroid/redroid:10.0.0-latest
