@@ -4,8 +4,8 @@ English | [简体中文](zh/)
 **ReDroid** (Remote Android) is a GPU accelerated AIC (Android In Container) solution. You can boot many
 instances in Linux host or any Linux container envrionments (`Docker`, `K8S`, `LXC` etc.). 
 *ReDroid* supports both arm64 and amd64 architectures. You can connect to *ReDroid* througth
-`VNC` or `scrcpy` / `sndcpy` or `WebRTC` (Panned) or `adb shell`. *ReDroid* is suitable for Cloud Gaming,
-VDI / VMI (Virtual Mobile Infurstrure), Automation Test and more.
+`scrcpy` or `adb shell`. *ReDroid* is suitable for Cloud Gaming, VDI / VMI (Virtual Mobile Infurstrure), 
+Automation Test and more.
 
 Currently supported:
 - Android S Preview (build by yourself)
@@ -41,11 +41,11 @@ scrcpy --serial <IP>:5555
 ## -v ~/data:/data  -- mount data partition
 ## -p 5555:5555 -- 5555 for adb connect, you can run `adb connect <IP>`
 
-# start with built-in VNC support (debug only)
+# start with VNC support (rebuild with `vncserver` module)
 docker run -itd --rm --memory-swappiness=0 --privileged \
 	-v ~/data:/data  \
 	-p 5900:5900 -p 5555:5555 \
-	redroid/redroid:10.0.0-latest redroid.vncserver=1
+	<image> redroid.vncserver=1
 
 ## explains:
 ## -p 5900:5900 -- 5900 for VNC connect, you can connect via VncViewer with <IP>:5900
