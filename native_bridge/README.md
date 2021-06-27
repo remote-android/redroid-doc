@@ -33,3 +33,4 @@ find /system \( -name 'libndk_translation*' -o -name '*arm*' -o -name 'ndk_trans
 Example: Patch libndk_translation in ReDroid 11
 
 ![Screenshot of ReDroid 11 with libndk_translation](./redroid_11_libndk_translation.png)
+

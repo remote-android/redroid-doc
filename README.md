@@ -1,8 +1,8 @@
 English | [简体中文](zh/)
 
 # ReDroid
-**ReDroid** (Remote Android) is a GPU accelerated AIC (Android In Container) solution. You can boot many
-instances in Linux host or any Linux container envrionments (`Docker`, `K8S`, `LXC` etc.). 
+**ReDroid** (*Re*mote an*Droid*) is a GPU accelerated AIC (Android In Container) solution. You can boot many
+instances in Linux host (`Docker`, `K8S` etc.). 
 *ReDroid* supports both arm64 and amd64 architectures. You can connect to *ReDroid* througth
 `scrcpy` or `adb shell`. *ReDroid* is suitable for Cloud Gaming, VDI / VMI (Virtual Mobile Infurstrure), 
 Automation Test and more.
@@ -22,38 +22,44 @@ Tested Platforms:
 - Alibaba Cloud Linux 2 (amd64)
 - Alibaba Cloud Linux 3 (amd64 / arm64) with `podman-docker`
 - WSL 2 (Ubuntu) (amd64)
+- CentOS (amd64*, arm64*)
+- OpenEuler 20.03 (amd64, arm64*)
+
+\* means need customized kernel
 
 ## Quick Start
 *ReDroid* runs on modern linux (kernel 4.14+), and require some Android specific modules (binder, ashmem etc.)
 check [kernel modules](https://github.com/remote-android/redroid-modules) to install these required kernel modules.
 
 ```bash
-# start and connect via `scrcpy` (Performance boost, *recommended*)
+# start and connect via `scrcpy`
 docker run -itd --rm --memory-swappiness=0 --privileged \
-	-v ~/data:/data \
-	-p 5555:5555 \
-	redroid/redroid:10.0.0-latest
+    --pull always \
+    -v ~/data:/data \
+    -p 5555:5555 \
+    redroid/redroid:9.0.0-latest
 
 adb connect <IP>:5555
 scrcpy --serial <IP>:5555
 
 ## explains:
+## --pull always  -- be sure to use the latest image
 ## -v ~/data:/data  -- mount data partition
 ## -p 5555:5555 -- 5555 for adb connect, you can run `adb connect <IP>`
 
-# start with VNC support (rebuild with `vncserver` module)
+# start with VNC support (NEED rebuild with `vncserver` module)
 docker run -itd --rm --memory-swappiness=0 --privileged \
-	-v ~/data:/data  \
-	-p 5900:5900 -p 5555:5555 \
-	<image> redroid.vncserver=1
+    -v ~/data:/data  \
+    -p 5900:5900 -p 5555:5555 \
+    <image> redroid.vncserver=1
 
 ## explains:
-## -p 5900:5900 -- 5900 for VNC connect, you can connect via VncViewer with <IP>:5900
+## -p 5900:5900 -- connect by VncViewer via <IP>:5900
 
 ```
 
 ## Start Params
-required params (already added in image args)
+required params (already added in docker image)
 - qemu=1
 - androidboot.hardware=redroid
 
@@ -62,14 +68,24 @@ display params
 - redroid.height=1280
 - redroid.fps=15
 - ro.sf.lcd_density=320
-
-VNC server
-- redroid.vncserver=[0|1]
+- redroid.enable_built_in_display=[0|1]
+- redroid.overlayfs=[0|1]
 
 GPU accelerating
 *ReDroid* use mesa3d to accelerate 3D rendering.
+Currently tested paltforms:
+- AMD (arm64, amd64 with `amdgpu` driver)
+- Intel (amd64 with `i915` driver)
+- virtio-gpu (vendor agnostic, arm64 and amd64)
+
+params:
+- redroid.gpu.mode=[auto|host|guest]
+- redroid.gpu.node=[/dev/dri/renderDxxx]
 - qemu.gles.vendor=mesa
 - ro.hardware.gralloc=gbm
+
+VNC server (NEED rebuild with `vncserver` module)
+- redroid.vncserver=[0|1]
 
 Virtual WiFi (Experiment in ReDroid 10, *build broken, fix soon*)
 - ro.kernel.qemu.wifi=1
@@ -77,15 +93,13 @@ Virtual WiFi is still under development, make sure `mac80211_hwsim` exist (`modp
 checkout `redroid-10-wifi` in `vendor/redroid` and `redroid-10.0.0` in `device/generic/goldfish` to make
 your build. run `docker exec <container> ip r add default via 192.168.232.1 dev wlan0`
 
-you can override system props prefixed with `qemu.` or `ro.`. for example, you can set `ro.secure=0`, then 
+NOTE: you can override system props prefixed with `qemu.` or `ro.`. for example, you can set `ro.secure=0`, then 
 you can get root adb shell by default.
 
 ## Deployment
 *ReDroid* support different deploy methods, check [Deploy](./deploy.md) for more details.
-- Docker
+- Docker (podman)
 - K8S
-- virsh-lxc / lxd (Planned)
-- kata-runtime (microVM, Planned)
 - Package Manager (Planned)
 
 ## Native Bridge
@@ -121,10 +135,11 @@ Contributing is always welcome (especially the `HAL` part). check [Contributing]
 
 ## Workarounds
 - Kernel 5.7+, need enable `binderfs` / `ashmem`
+- `redroid` require `pid_max` less than 65535, or else may run into problems. Change in host OS, or add `pid_max` separation support in PID namespace
 - SElinux is disabled in *ReDroid*; possible enabled with [selinuxns POC](http://namei.org/presentations/selinux_namespacing_lca2018.pdf)
-- sdcardfs currently not implemented, use `fuse` instead; may need run `modprobe fuse` first in some OS (AmazonLinux2?)
-- CGroups errors ignored; some cgroups path not same with generic linux, and some (`stune` for example) not supported
-- `procfs` not fully seperated with host OS; community use `lxcfs` and some cloud vendor ([TencentOS](https://github.com/Tencent/TencentOS-kernel)) enhanced in their own kernel.
+- sdcardfs currently not implemented, use `fuse` instead; may need run `modprobe fuse` first in some OS (AmazonLinux2 ?)
+- CGroups errors ignored; some (`stune` for example) not supported in generic linux.
+- `procfs` not fully seperated with host OS; Community use `lxcfs` and some cloud vendor ([TencentOS](https://github.com/Tencent/TencentOS-kernel)) enhanced in their own kernel.
 - vintf verify disabled (since no kernel)
 
 ## Contacts

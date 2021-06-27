@@ -8,5 +8,6 @@ build *ReDroid*:
 - `lunch`
 - `m`
 
-sync build (required)
-- `export BUILD_OUT=~/redroid_out && ./sync.sh` (pasword same as `id -un`)
+sync build (fix file owner / permission etc.)
+- `export BUILD_OUT=~/redroid_out && cd vendor/redroid && ./sync.sh` (pasword same as `id -un`)
+
