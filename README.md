@@ -8,7 +8,7 @@ instances in Linux host (`Docker`, `K8S` etc.).
 Automation Test and more.
 
 Currently supported:
-- Android S Preview (build by yourself)
+- Android 12 (`redroid/redroid:12.0.0-latest`, `redroid/redroid:12.0.0-amd64`, `redroid/redroid:12.0.0-arm64`)
 - Android 11 (`redroid/redroid:11.0.0-latest`, `redroid/redroid:11.0.0-amd64`, `redroid/redroid:11.0.0-arm64`)
 - Android 10 (`redroid/redroid:10.0.0-latest`, `redroid/redroid:10.0.0-amd64`, `redroid/redroid:10.0.0-arm64`)
 - Android 9 (`redroid/redroid:9.0.0-latest`, `redroid/redroid:9.0.0-amd64`, `redroid/redroid:9.0.0-arm64`)
@@ -22,13 +22,13 @@ Tested Platforms:
 - Alibaba Cloud Linux 2 (amd64)
 - Alibaba Cloud Linux 3 (amd64 / arm64) with `podman-docker`
 - WSL 2 (Ubuntu) (amd64)
-- CentOS (amd64*, arm64*)
-- OpenEuler 20.03 (amd64, arm64*)
+- CentOS (amd64\*, arm64\*)
+- OpenEuler 20.03 (amd64, arm64\*)
 
 \* means need customized kernel
 
 ## Quick Start
-*ReDroid* runs on modern linux (kernel 4.14+), and require some Android specific modules (binder, ashmem etc.)
+*ReDroid* runs on modern linux (kernel 4.14+), and require some Android specific modules (`binderfs`, `ashmem` etc.)
 check [kernel modules](https://github.com/remote-android/redroid-modules) to install these required kernel modules.
 
 ```bash
@@ -46,15 +46,6 @@ scrcpy --serial <IP>:5555
 ## --pull always  -- be sure to use the latest image
 ## -v ~/data:/data  -- mount data partition
 ## -p 5555:5555 -- 5555 for adb connect, you can run `adb connect <IP>`
-
-# start with VNC support (NEED rebuild with `vncserver` module)
-docker run -itd --rm --memory-swappiness=0 --privileged \
-    -v ~/data:/data  \
-    -p 5900:5900 -p 5555:5555 \
-    <image> redroid.vncserver=1
-
-## explains:
-## -p 5900:5900 -- connect by VncViewer via <IP>:5900
 
 ```
 
@@ -83,9 +74,6 @@ params:
 - redroid.gpu.node=[/dev/dri/renderDxxx]
 - qemu.gles.vendor=mesa
 - ro.hardware.gralloc=gbm
-
-VNC server (NEED rebuild with `vncserver` module)
-- redroid.vncserver=[0|1]
 
 Virtual WiFi (Experiment in ReDroid 10, *build broken, fix soon*)
 - ro.kernel.qemu.wifi=1
