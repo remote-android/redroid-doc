@@ -7,7 +7,7 @@ English | [简体中文](zh/)
 - [Native Bridge Support](#native-bridge-support)
 - [GMS Support](#gms-support)
 - [WebRTC Streaming](#webrtc-streaming)
-- [How To Build](#build)
+- [How To Build](#how-to-build)
 - [Troubleshooting](#troubleshooting)
 - [Note](#note)
 - [Contact Me](#contact-me)
@@ -167,11 +167,12 @@ It's Same as AOSP building process. But I suggest to use `docker` to build.
 Check [android-builder-docker](./android-builder-docker) for details.
 
 ## Troubleshooting
-container disappeared immediately
+Container disappeared immediately
 > make sure the required kernel modules are installed; run `dmesg -T` for detailed logs
 
-container running, but adb cannot connect (device offline etc.)
+Container running, but adb cannot connect (device offline etc.)
 > run `docker exec -it <container> sh`, then check `ps -A` and `logcat`
+>
 > try `dmesg -T` if cannot get a container shell
 
 
