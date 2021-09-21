@@ -1,4 +1,4 @@
-English | [简体中文](zh/)
+English | [简体中文](README.zh-cn.md)
 
 # Table of contents
 - [Overview](#overview)
