@@ -2,10 +2,10 @@
 
 ## Sync Code
 ReDroid manifest include several branches:
-- `redroid12-gsi`, --`redroid-s-beta-3`--
-- `redroid11-gsi`, --`redroid-11.0.0`--
-- `redroid10-gsi`, --`redroid-10.0.0`--
-- `redroid9-gsi` (experimental), `redroid-9.0.0`
+- `redroid12-gsi`, `redroid-s-beta-3`
+- `redroid11-gsi`, `redroid-11.0.0`
+- `redroid10-gsi`, `redroid-10.0.0`
+- `redroid-9.0.0`, `redroid9-gsi` (experimental)
 - `redroid-8.1.0`
 
 branch with `-gsi` is recommended (fully treble / VNDK  enforced).
