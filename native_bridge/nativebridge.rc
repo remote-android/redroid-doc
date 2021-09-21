@@ -1,9 +1,0 @@
-on early-init
-    setprop ro.product.cpu.abilist x86_64,arm64-v8a,x86,armeabi-v7a,armeabi
-    setprop ro.product.cpu.abilist64 x86_64,arm64-v8a
-    setprop ro.product.cpu.abilist32 x86,armeabi-v7a,armeabi
-    setprop ro.dalvik.vm.isa.arm x86
-    setprop ro.dalvik.vm.isa.arm64 x86_64
-    setprop ro.enable.native.bridge.exec 1
-    setprop ro.dalvik.vm.native.bridge libndk_translation.so
-    setprop ro.ndk_translation.version 0.2.2
