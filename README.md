@@ -167,10 +167,10 @@ It's Same as AOSP building process. But I suggest to use `docker` to build.
 Check [android-builder-docker](./android-builder-docker) for details.
 
 ## Troubleshooting
-Container disappeared immediately
+- Container disappeared immediately
 > make sure the required kernel modules are installed; run `dmesg -T` for detailed logs
 
-Container running, but adb cannot connect (device offline etc.)
+- Container running, but adb cannot connect (device offline etc.)
 > run `docker exec -it <container> sh`, then check `ps -A` and `logcat`
 >
 > try `dmesg -T` if cannot get a container shell
