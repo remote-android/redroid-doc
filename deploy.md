@@ -1,4 +1,0 @@
-# ReDroid Deployment
-
-TBD
-

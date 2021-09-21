@@ -6,7 +6,7 @@ ARG username
 
 # COPY apt.conf /etc/apt/apt.conf
 
-COPY sources.list etc/apt/sources.list
+#COPY sources.list etc/apt/sources.list
 
 # gettext python-mako python3-mako python-enum34 used to build mesa3d
 RUN apt-get update && apt-get install -y git-core gnupg flex bison gperf build-essential zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z-dev ccache libgl1-mesa-dev libxml2-utils xsltproc unzip python gettext python-mako python3-mako python-enum34
