@@ -1,9 +1,9 @@
 # Build ReDroid with docker
 
 ## Sync Code
-ReDroid manifest include several branches:
-- `redroid-12.0.0`
-- `redroid-11.0.0`
+ReDroid manifest include several branches / tags:
+- `redroid-12.0.0` / `refs/tags/redroid-12.0.0_rxxxxxx`
+- `redroid-11.0.0` / `refs/tags/redroid-11.0.0_rxxxxxx`
 - `redroid-10.0.0`
 - `redroid-9.0.0`
 - `redroid-8.1.0`
@@ -12,18 +12,21 @@ ReDroid manifest include several branches:
 # fetch code
 
 mkdir ~/redroid && cd ~/redroid
-repo init -u https://github.com/remote-android/platform_manifests.git -b <BRANCH> --depth=1
+repo init -u https://github.com/remote-android/platform_manifests.git -b <REV> --depth=1
 repo sync -c --no-tags
 ```
 
 ## Build
 ```bash
-# create builder docker image
+# create builder docker image (ubuntu 20.04)
 # adjust apt.conf and source.list if needed
-docker build --build-arg userid=$(id -u) --build-arg groupid=$(id -g) --build-arg username=$(id -un) -t android-build-trusty .
+docker build --build-arg userid=$(id -u) --build-arg groupid=$(id -g) --build-arg username=$(id -un) -t redroid-builder .
+
+# OR ubuntu 14.04 (old mesa3d release)
+docker build --build-arg userid=$(id -u) --build-arg groupid=$(id -g) --build-arg username=$(id -un) -t redroid-builder -f Dockerfile.1404 .
 
 # start builder
-docker run -it -v ~/redroid:/src android-build-trusty
+docker run -it --rm --hostname redroid-builder --name redroid-builder -v <AOSP-SRC>:/src redroid-builder
 
 # *inside* builder container
 cd /src
