@@ -22,6 +22,7 @@ instances in Linux host (`Docker`, `podman`, `k8s` etc.). *ReDroid* supports bot
 
 Currently supported:
 - Android 12 (`redroid/redroid:12.0.0-latest`, `redroid/redroid:12.0.0-amd64`, `redroid/redroid:12.0.0-arm64`)
+- Android 12 64bit only (`redroid/redroid:12.0.0_64only-latest`, `redroid/redroid:12.0.0_64only-amd64`, `redroid/redroid:12.0.0_64only-arm64`)
 - Android 11 (`redroid/redroid:11.0.0-latest`, `redroid/redroid:11.0.0-amd64`, `redroid/redroid:11.0.0-arm64`)
 - Android 10 (`redroid/redroid:10.0.0-latest`, `redroid/redroid:10.0.0-amd64`, `redroid/redroid:10.0.0-arm64`)
 - Android 9 (`redroid/redroid:9.0.0-latest`, `redroid/redroid:9.0.0-amd64`, `redroid/redroid:9.0.0-arm64`)
@@ -31,7 +32,7 @@ Tested Platforms:
 - Ubuntu 16.04 / 18.04 / 20.04 (amd64 / arm64)
 - Amazon Linux 2 (amd64 / arm64)
 - Alibaba Cloud Linux 2 (amd64)
-- Alibaba Cloud Linux 3 (amd64 / arm64) with `podman-docker`
+- Alibaba Cloud Linux 3 (amd64 / arm64)
 - WSL 2 (Ubuntu) (amd64)
 - CentOS (amd64\*, arm64\*)
 - OpenEuler 20.03 (amd64, arm64\*)
@@ -78,7 +79,7 @@ Network:
 
 GPU accelerating
 *ReDroid* use mesa3d to accelerate 3D rendering.
-Currently tested paltforms:
+Currently tested platforms:
 - AMD (arm64, amd64 with `amdgpu` driver)
 - Intel (amd64 with `i915` driver)
 - virtio-gpu (vendor agnostic, arm64 and amd64)
@@ -86,8 +87,6 @@ Currently tested paltforms:
 params:
 - redroid.gpu.mode=[auto|host|guest]
 - redroid.gpu.node=[/dev/dri/renderDxxx]
-- qemu.gles.vendor=mesa
-- ro.hardware.gralloc=gbm
 
 Virtual WiFi (Experiment in ReDroid 10, *build broken, fix soon*)
 - ro.kernel.qemu.wifi=1
