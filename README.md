@@ -37,7 +37,7 @@ Tested Platforms:
 - CentOS (amd64\*, arm64\*)
 - OpenEuler 20.03 (amd64, arm64\*)
 
-\* means need customized kernel
+\* customized kernel required
 
 ## Getting Started
 *ReDroid* requires some kernel modules (`binderfs`, `ashmem` etc.).
