@@ -16,7 +16,7 @@ English | [简体中文](README.zh-cn.md)
 ## Overview
 **ReDroid** (*Re*mote an*Droid*) is a GPU accelerated AIC (Android In Container) solution. You can boot many
 instances in Linux host (`Docker`, `podman`, `k8s` etc.). *ReDroid* supports both `arm64` and `amd64` architectures. 
-*ReDroid* is suitable for Cloud Gaming, VMI (Virtual Mobile Infurstrure), Automation Test and more.
+*ReDroid* is suitable for Cloud Gaming, VMI (Virtual Mobile Infrastructure), Automation Test and more.
 
 ![Screenshot of ReDroid 11](./assets/redroid11.png)
 
