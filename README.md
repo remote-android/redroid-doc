@@ -54,10 +54,10 @@ docker run -itd --rm --memory-swappiness=0 --privileged \
 adb connect <IP>:5555
 scrcpy --serial <IP>:5555
 
-## explains:
-## --pull always  -- be sure to use the latest image
-## -v ~/data:/data  -- mount data partition
-## -p 5555:5555 -- expose adb port, you can connect via `adb connect <HOST-IP>`
+## Explanation:
+##   --pull always    -- be sure to use the latest image
+##   -v ~/data:/data  -- mount data partition
+##   -p 5555:5555     -- expose adb port, you can connect via `adb connect <HOST-IP>`
 
 ```
 
