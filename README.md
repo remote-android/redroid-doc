@@ -16,7 +16,7 @@ English | [简体中文](README.zh-cn.md)
 ## Overview
 **ReDroid** (*Re*mote an*Droid*) is a GPU accelerated AIC (Android In Container) solution. You can boot many
 instances in Linux host (`Docker`, `podman`, `k8s` etc.). *ReDroid* supports both `arm64` and `amd64` architectures. 
-*ReDroid* is suitable for Cloud Gaming, VMI (Virtual Mobile Infurstrure), Automation Test and more.
+*ReDroid* is suitable for Cloud Gaming, VMI (Virtual Mobile Infrastructure), Automation Test and more.
 
 ![Screenshot of ReDroid 11](./assets/redroid11.png)
 
@@ -37,7 +37,7 @@ Tested Platforms:
 - CentOS (amd64\*, arm64\*)
 - OpenEuler 20.03 (amd64, arm64\*)
 
-\* means need customized kernel
+\* customized kernel required
 
 ## Getting Started
 *ReDroid* requires some kernel modules (`binderfs`, `ashmem` etc.).
@@ -54,10 +54,10 @@ docker run -itd --rm --memory-swappiness=0 --privileged \
 adb connect <IP>:5555
 scrcpy --serial <IP>:5555
 
-## explains:
-## --pull always  -- be sure to use the latest image
-## -v ~/data:/data  -- mount data partition
-## -p 5555:5555 -- expose adb port, you can connect via `adb connect <HOST-IP>`
+## Explanation:
+##   --pull always    -- be sure to use the latest image
+##   -v ~/data:/data  -- mount data partition
+##   -p 5555:5555     -- expose adb port, you can connect via `adb connect <HOST-IP>`
 
 ```
 
