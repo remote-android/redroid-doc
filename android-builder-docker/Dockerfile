@@ -21,7 +21,7 @@ RUN apt-get update \
     && apt-get install -y python3-pip pkg-config python3-dev ninja-build \
     && pip3 install mako meson \
     && echo "packages for legacy mesa3d (< 22.0.0)" \
-    && apt-get install -y python2 python-mako python-is-python2 python-enum34
+    && apt-get install -y python2 python-mako python-is-python2 python-enum34 gettext
 
 
 RUN groupadd -g $groupid $username \
