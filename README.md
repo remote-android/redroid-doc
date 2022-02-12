@@ -149,9 +149,43 @@ ro.ndk_translation.version=0.2.2
 docker build . -t redroid:11.0.0-amd64-nb
 ```
 
+Take a look at https://gitlab.com/android-generic/android_vendor_google_emu-x86 to extract automatically libndk_translator from the Android 11 emulator images. 
+
+After following the guide on "Building" section, you will get native-bridge.tar under vendor/google/emu-x86/proprietary.
+
+If you find errors in using libndk_translator, please try the following:
+
+- YOU MUST HAVE binfmt_misc kernel module loaded for supporting other binaries formats! If you have not loaded it already:
+
+  ```bash
+  sudo modprobe binfmt_misc
+  ```
+
+  or add binfmt_misc to /etc/modules to autoload it at boot (for example in Ubuntu). 
+
+  Check your specific distribution wiki/docs if you don't have binfmt_misc module and you want to install it, or how to autoload the module at boot.
+
+- Extract the native bridge archive, preserving the permissions, set specific permissions for allowing init file to be executed and traverse of important dirs:
+
+  ```bash
+  mkdir native-bridge
+  cd native-bridge
+  sudo tar -xpf ../native-bridge.tar `#or path to your actual native bridge tarball`
+  sudo chmod 0644 system/etc/init/ndk_translation_arm64.rc
+  sudo chmod 0755 system/bin/arm
+  sudo chmod 0755 system/bin/arm64
+  sudo chmod 0755 system/lib/arm
+  sudo chmod 0755 system/lib64/arm64
+  sudo tar -cpf native-bridge.tar system
+  ```
+
+  Move or copy your new native-bridge.tar into the dir where you have written your Dockerfile, and rebuild again the new image with native bridge support. 
+  
+  You must use sudo or a root shell to preserve the permissions and owners of the files.
+
 ## GMS Support
-It's possible to add GMS (Google Mobile Service) support in *ReDroid* via [Open GApps](https://opengapps.org/) 
-or [MicroG](https://microg.org/).
+
+It's possible to add GMS (Google Mobile Service) support in *ReDroid* via [Open GApps](https://opengapps.org/), [MicroG](https://microg.org/) or [MindTheGapps](https://gitlab.com/MindTheGapps/vendor_gapps).
 
 
 ## WebRTC Streaming
