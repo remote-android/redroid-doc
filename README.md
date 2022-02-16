@@ -176,6 +176,7 @@ If you find errors in using libndk_translator, please try the following:
   sudo chmod 0755 system/bin/arm64
   sudo chmod 0755 system/lib/arm
   sudo chmod 0755 system/lib64/arm64
+  sudo chmod 0644 system/etc/binfmt_misc/*
   sudo tar -cpf native-bridge.tar system
   ```
 
