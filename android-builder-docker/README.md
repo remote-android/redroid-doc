@@ -1,11 +1,5 @@
 # Build ReDroid with docker
 
-### Hardware requirements :fa-folder-open-o:
-
-- At least 250GB of free disk space to check out the code and an extra 150 GB to build it. If you conduct multiple builds, you need additional space.
-- At least 16 GB of available RAM is required, but Google recommends 64 GB.
-
-
 ## Sync Code
 ReDroid manifest include several branches / tags:
 - `redroid-12.0.0` / `refs/tags/redroid-12.0.0_rxxxxxx`
@@ -20,37 +14,18 @@ ReDroid manifest include several branches / tags:
 mkdir ~/redroid && cd ~/redroid
 repo init -u https://github.com/remote-android/platform_manifests.git -b <REV> --depth=1
 repo sync -c --no-tags
-
-#### If repo is not foud
-
-sudo apt-get install repo
-
-
-# if is not working go manually
-mkdir -p ~/.bin
-PATH="${HOME}/.bin:${PATH}"
-curl https://storage.googleapis.com/git-repo-downloads/repo > ~/.bin/repo
-chmod a+rx ~/.bin/repo 
-
-#/usr/bin/env: ‘python’: No such file or directory
-#python3 need to be installed and added to path, for unbuntu 20.04 you can go away with this
-sudo apt-get install python-is-python3
 ```
-
-
-
 
 ## Build
 ```bash
 # create builder docker image (ubuntu 20.04)
 # adjust apt.conf and source.list if needed
-# if root delete (``N groupadd -g $groupid $userid ...```)
 docker build --build-arg userid=$(id -u) --build-arg groupid=$(id -g) --build-arg username=$(id -un) -t redroid-builder .
 
 # OR ubuntu 14.04 (old mesa3d release)
 docker build --build-arg userid=$(id -u) --build-arg groupid=$(id -g) --build-arg username=$(id -un) -t redroid-builder -f Dockerfile.1404 .
 
-# start 
+# start builder
 docker run -it --rm --hostname redroid-builder --name redroid-builder -v <AOSP-SRC>:/src redroid-builder
 
 # *inside* builder container
@@ -65,8 +40,7 @@ lunch redroid_x86_64-userdebug
 
 m
 
-# create redroid docker image in *HOST* (you need to exit the container)
-# example path of "<BUILD-OUT-DIR>" - redroid/out/target/product/redroid_x86_64
+# create redroid docker image in *HOST*
 cd <BUILD-OUT-DIR>
 sudo mount system.img system -o ro
 sudo mount vendor.img vendor -o ro
@@ -119,4 +93,3 @@ project prebuilts/clang/host/linux-x86/         (*** NO BRANCH ***)
  -m     clang-r353983c/lib64/clang/9.0.3/lib/linux/libclang_rt.scudo_minimal-x86_64-android.a
 ```
 
-# 
