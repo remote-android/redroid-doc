@@ -1,19 +1,20 @@
 # Build ReDroid with docker
 
 ## Sync Code
-ReDroid manifest include several branches / tags:
-- `redroid-12.0.0` / `refs/tags/redroid-12.0.0_rxxxxxx`
-- `redroid-11.0.0` / `refs/tags/redroid-11.0.0_rxxxxxx`
+ReDroid manifest include several branches / snapshots:
+- `redroid-12.0.0`
+- `redroid-11.0.0`
 - `redroid-10.0.0`
 - `redroid-9.0.0`
 - `redroid-8.1.0`
+- `snapshots/XXX` in `snapshot` branch
 
 ```bash
 # fetch code
 
 mkdir ~/redroid && cd ~/redroid
 repo init -u https://github.com/remote-android/platform_manifests.git -b <REV> --depth=1
-repo sync -c --no-tags
+repo sync -c
 ```
 
 ## Build

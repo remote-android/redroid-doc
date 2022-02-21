@@ -16,7 +16,7 @@ RUN apt-get update \
         gcc-multilib g++-multilib libc6-dev-i386 libncurses5 lib32ncurses5-dev x11proto-core-dev \
         libx11-dev lib32z1-dev libgl1-mesa-dev libxml2-utils xsltproc unzip fontconfig \
     && echo "install utils" \
-    && apt-get install -y sudo \
+    && apt-get install -y sudo rsync \
     && echo "install packages for build mesa3d or meson related" \
     && apt-get install -y python3-pip pkg-config python3-dev ninja-build \
     && pip3 install mako meson \
