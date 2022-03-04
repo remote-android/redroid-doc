@@ -72,11 +72,12 @@ display params
 - redroid.height=1280
 - redroid.fps=15
 - ro.sf.lcd_density=320
-- redroid.enable_built_in_display=[0|1]
-- redroid.overlayfs=[0|1]
 
 Network:
 - net.eth0.dns1=<IP>
+- net.eth0.proxy.type=[static|pac|none|unassigned]
+- net.eth0.proxy.host=<IP>
+- net.eth0.proxy.port=<port>
 
 GPU accelerating
 *ReDroid* use mesa3d to accelerate 3D rendering.
@@ -88,12 +89,6 @@ Currently tested platforms:
 params:
 - redroid.gpu.mode=[auto|host|guest]
 - redroid.gpu.node=[/dev/dri/renderDxxx]
-
-Virtual WiFi (Experiment in ReDroid 10, *build broken, fix soon*)
-- ro.kernel.qemu.wifi=1
-Virtual WiFi is still under development, make sure `mac80211_hwsim` exist (`modprobe mac80211_hwsim`).
-checkout `redroid-10-wifi` in `vendor/redroid` and `redroid-10.0.0` in `device/generic/goldfish` to make
-your build. run `docker exec <container> ip r add default via 192.168.232.1 dev wlan0`
 
 NOTE: you can override system props prefixed with `qemu.` or `ro.`. for example, you can set `ro.secure=0`, then 
 you can get root adb shell by default.
