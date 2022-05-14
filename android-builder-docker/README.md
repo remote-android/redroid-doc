@@ -12,6 +12,10 @@ ReDroid manifest include several branches / snapshots:
 ```bash
 # fetch code
 
+# install git-lfs
+apt install git-lfs
+git lfs install
+
 mkdir ~/redroid && cd ~/redroid
 repo init -u https://github.com/remote-android/platform_manifests.git -b <REV> --depth=1
 repo sync -c
