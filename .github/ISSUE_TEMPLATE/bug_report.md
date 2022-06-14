@@ -10,21 +10,13 @@ assignees: ''
 **Describe the bug**
 A clear and concise description of what the bug is.
 
-**Check required kernel modules**
+**make sure the required kernel modules present**
 - `grep binder /proc/filesystems`
 - `grep ashmem /proc/misc`
 
-**Host info**
-- `uname -a`
-- `lscpu`
-- `ls -al /dev/dri/ && cat /sys/kernel/debug/dri/*/name`
-- `docker info`
-- `dmesg -T`  (suggest put into a text file)
-
-**Container info**
-- running command: `docker run ...`
-- `docker exec <container> ps -A`
-- `docker exec <container> logcat -d` (suggest put into a text file)
+**collect debug logs**
+`curl -fsSL https://raw.githubusercontent.com/remote-android/redroid-doc/master/debug.sh | bash -s -- [CONTAINER]`
+omit CONTAINER if not exist any more.
 
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
