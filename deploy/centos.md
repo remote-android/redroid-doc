@@ -2,7 +2,7 @@
 ```
 ## use custom 5.10 kernel
 
-### enable following kernel features
+### enable kernel features for x86_64
 
 # codec2 required, can use ION for legacy kernel
 CONFIG_DMABUF_HEAPS=y
@@ -19,7 +19,18 @@ CONFIG_ANDROID_BINDERFS=y
 CONFIG_ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder"
 
 
-### running redroid
+### extra kernel features for arm64
+
+CONFIG_COMPAT=y
+CONFIG_COMPAT_32BIT_TIME=y
+
+CONFIG_ARM64_4K_PAGES=y
+
+
+## disable SELinux temporarily
+setenforce 0
+
+## running redroid
 docker run -itd --rm --privileged \
     --pull always \
     -v ~/data11:/data \
