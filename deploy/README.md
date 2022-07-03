@@ -24,6 +24,7 @@ resort, custom kernels are always capable.
 - [arch-linux](arch-linux.md)
 - [centos](centos.md)
 - [debian](debian.md)
+- [fedora](fedora.md)
 - [kubernetes](kubernetes.md)
 - [ubuntu](ubuntu.md)
 - [wsl](wsl.md)
