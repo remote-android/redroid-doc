@@ -1,42 +1,42 @@
 # Deploy redroid 
 
-*redroid* should capable to run on any linux environment as long as the 
-required kernel features avaiable (`binderfs` etc.). Fortunately, these 
-kernel features are already included in some linux distributions 
-(maybe need seperate kernel / modules package). *redroid* also provide
+*redroid* should capable to run on any Linux environment as long as the 
+required kernel features available (`binderfs` etc.). Fortunately, these 
+kernel features are already enabled in some Linux distros
+(extra packages might needed). *redroid* also provides
 [redroid-modules](https://github.com/remote-android/redroid-modules) repo
-to support some linux distrutions without those kernel features. And as last
-resort, custom kernels are always capable.
+to support those distros without the required kernel features. And as last
+resort, it's always capable via customizing Linux kernel.
 
 
 **madatory kernel features**
 - `binderfs`
 - `ashmem` / `memfd`
-- `ipv6`
-- `ion` / `dma_heap`
+- `IPv6`
+- `ION` / `DMA-BUF Heaps`
 - 4KB page size
 - ...
 
 
 **deployment per distro / platform**
-- [alibaba-cloud-linux](alibaba-cloud-linux.md)
-- [amazon-linux](amazon-linux.md)
-- [arch-linux](arch-linux.md)
-- [centos](centos.md)
-- [debian](debian.md)
-- [fedora](fedora.md)
+- [Alibaba-Cloud-Linux](alibaba-cloud-linux.md)
+- [Amazon-Linux](amazon-linux.md)
+- [Arch-Linux](arch-linux.md)
+- [CentOS](centos.md)
+- [Debian](debian.md)
+- [Fedora](fedora.md)
 - [Gentoo](gentoo.md)
-- [kubernetes](kubernetes.md)
+- [Kubernetes](kubernetes.md)
 - [Mint](mint.md)
-- [ubuntu](ubuntu.md)
-- [wsl](wsl.md)
+- [Ubuntu](ubuntu.md)
+- [WSL](wsl.md)
 
 
 **general deploy redroid instructions**
 ```
 ## install docker https://docs.docker.com/engine/install/#server
 
-## make sure required kernel features enabled
+## make sure required kernel features enabled; Check details on per distro page
 
 
 ## running redroid
