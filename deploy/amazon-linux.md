@@ -5,6 +5,9 @@ Check [redroid-modules](https://github.com/remote-android/redroid-modules) to in
 required kernel modules.
 
 ```
+## redroid use fuse to emulate external storage
+modprobe fuse
+
 ## running redroid
 docker run -itd --rm --privileged \
     --pull always \

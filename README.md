@@ -84,12 +84,14 @@ docker run -itd --rm --privileged \
 
 | Param | Description | Default |
 | --- | --- | --- |
-| `qemu` | export param with the "ro.kernel." prefix; **NOT** `QEMU-KVM` related | 1 |
+| `qemu` | export param with the "ro.kernel." prefix<br>**NOT** `QEMU-KVM` related | 1 |
 | `androidboot.hardware` | specify `ro.boot.hardware` prop | redroid |
 | `redroid.width` | display width | 720 |
 | `redroid.height` | display height | 1280 |
-| `redroid.fps` | display FPS | auto-detect |
+| `redroid.fps` | display FPS | 30(GPU enabled)<br> 15 (GPU not enabled)|
 | `androidboot.redroid_dpi` | display DPI | 320 |
+| `androidboot.use_memfd` | use `memfd` to replace deprecated `ashmem`<br>plan to enable by default | false |
+| `androidboot.use_redroid_overlayfs` | use `overlayfs` to share `data` partition<br>`/data-base`: shared `data` partition<br>`/data-diff`: private data | 0 |
 | `net.eth0.dns1` | DNS | 8.8.8.8 |
 | `net.eth0.proxy.type` | Proxy type; choose from: `static`, `pac`, `none`, `unassigned` | |
 | `net.eth0.proxy.host` | | |
@@ -97,6 +99,8 @@ docker run -itd --rm --privileged \
 | `redroid.gpu.mode` | choose from: `auto`, `host`, `guest`;<br>`guest`: use software rendering;<br>`host`: use GPU accelerated rendering;<br>`auto`: auto detect | `auto` |
 | `redroid.gpu.node` | | auto-detect |
 | `ro.xxx`| **DEBUG** purpose, allow override `ro.xxx` prop; For example, set `ro.secure=0`, then root adb shell provided by default | |
+
+> Plan to migrate all params under `androidboot.` namespace
 
 
 ## Native Bridge Support
@@ -190,6 +194,8 @@ If you find errors in using libndk_translator, please try the following:
 
 It's possible to add GMS (Google Mobile Service) support in *ReDroid* via [Open GApps](https://opengapps.org/), [MicroG](https://microg.org/) or [MindTheGapps](https://gitlab.com/MindTheGapps/vendor_gapps).
 
+Check [android-builder-docker](./android-builder-docker) for details.
+
 
 ## WebRTC Streaming
 **CALL FOR HELP**
@@ -212,13 +218,11 @@ Check [android-builder-docker](./android-builder-docker) for details.
 
 
 ## Note
-- Kernel 5.7+, need enable `binderfs` / `ashmem`
 - `redroid` require `pid_max` less than 65535, or else may run into problems. Change in host OS, or add `pid_max` separation support in PID namespace
-- SElinux is disabled in *ReDroid*; possible enabled with [selinuxns POC](http://namei.org/presentations/selinux_namespacing_lca2018.pdf)
-- `sdcardfs` currently not implemented, use `fuse` instead; may need run `modprobe fuse` first in some OS (AmazonLinux2 ?)
+- SElinux is disabled in *ReDroid*;
 - CGroups errors ignored; some (`stune` for example) not supported in generic linux.
 - `procfs` not fully seperated with host OS; Community use `lxcfs` and some cloud vendor ([TencentOS](https://github.com/Tencent/TencentOS-kernel)) enhanced in their own kernel.
-- vintf verify disabled (since no kernel)
+- `vintf` verify disabled
 
 ## Contact Me
 - ziyang.zhou@outlook.com
@@ -229,4 +233,3 @@ Check [android-builder-docker](./android-builder-docker) for details.
 many 3rd party modules, you may need to examine license carefully.
 
 *ReDroid* kernel modules are under [GPL v2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
-
