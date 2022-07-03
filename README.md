@@ -14,9 +14,9 @@ English | [简体中文](README.zh-cn.md)
 - [License](#license)
 
 ## Overview
-**ReDroid** (*Re*mote an*Droid*) is a GPU accelerated AIC (Android In Container) solution. You can boot many
-instances in Linux host (`Docker`, `podman`, `k8s` etc.). *ReDroid* supports both `arm64` and `amd64` architectures. 
-*ReDroid* is suitable for Cloud Gaming, VMI (Virtual Mobile Infrastructure), Automation Test and more.
+*ReDroid* (*Re*mote an*Droid*) is a GPU accelerated AIC (Android In Cloud) solution. You can boot many
+instances in Linux host (`Docker`, `podman`, `k8s` etc.). *redroid* supports both `arm64` and `amd64` architectures. 
+*ReDroid* is suitable for Cloud Gaming, Virtualise Phones, Automation Test and more.
 
 ![Screenshot of ReDroid 11](./assets/redroid11.png)
 
@@ -29,69 +29,75 @@ Currently supported:
 - Android 9 (`redroid/redroid:9.0.0-latest`, `redroid/redroid:9.0.0-amd64`, `redroid/redroid:9.0.0-arm64`)
 - Android 8.1 (`redroid/redroid:8.1.0-latest`, `redroid/redroid:8.1.0-amd64`, `redroid/redroid:8.1.0-arm64`)
 
-Tested Platforms:
-- Ubuntu 16.04 / 18.04 / 20.04 (amd64 / arm64)
-- Amazon Linux 2 (amd64 / arm64)
-- Alibaba Cloud Linux 2 (amd64)
-- Alibaba Cloud Linux 3 (amd64 / arm64)
-- WSL 2 (Ubuntu) (amd64)
-- CentOS (amd64\*, arm64\*)
-- OpenEuler 20.03 (amd64, arm64\*)
-
-\* customized kernel required
 
 ## Getting Started
-*ReDroid* requires some kernel modules (`binderfs`, `ashmem` etc.).
-**Check [kernel modules](https://github.com/remote-android/redroid-modules) to install these modules.**
+*redroid* should capabale running on any linux (with some kernel features enabled).
+
+Quick start on *Ubuntu 20.04* here; Check [deploy section](deploy/README.md) for other distros.
 
 ```bash
-# start and connect via `scrcpy`
-docker run -itd --rm --memory-swappiness=0 --privileged \
+## install docker https://docs.docker.com/engine/install/#server
+
+## install required kernel modules
+apt install linux-modules-extra-`uname -r`
+modprobe binder_linux devices="binder,hwbinder,vndbinder"
+modprobe ashmem_linux
+
+
+## running redroid
+docker run -itd --rm --privileged \
     --pull always \
     -v ~/data:/data \
     -p 5555:5555 \
     redroid/redroid:11.0.0-latest
 
-adb connect <IP>:5555
-scrcpy --serial <IP>:5555
+### Explanation:
+###   --pull always    -- use latest image
+###   -v ~/data:/data  -- mount data partition
+###   -p 5555:5555     -- expose adb port
 
-## Explanation:
-##   --pull always    -- be sure to use the latest image
-##   -v ~/data:/data  -- mount data partition
-##   -p 5555:5555     -- expose adb port, you can connect via `adb connect <HOST-IP>`
 
+## install adb https://developer.android.com/studio#downloads
+adb connect localhost:5555
+### NOTE: change localhost to IP if running redroid remotely
+
+## view redroid screen
+## install scrcpy https://github.com/Genymobile/scrcpy/blob/master/README.md#get-the-app
+scrcpy -s localhost:5555
+### NOTE: change localhost to IP if running redroid remotely
+###     typically running scrcpy on your local PC
 ```
 
 ## Configuration
-required params (already added in docker image)
-- qemu=1
-- androidboot.hardware=redroid
 
-display params
-- redroid.width=720
-- redroid.height=1280
-- redroid.fps=15
-- ro.sf.lcd_density=320
+```
+## running redroid with custom settings (custom display for example)
+docker run -itd --rm --privileged \
+    --pull always \
+    -v ~/data:/data \
+    -p 5555:5555 \
+    redroid/redroid:11.0.0-latest \
+    redroid.width=1080 \
+    redroid.height=1920 \
+    androidboot.redroid_dpi=480 \
+```
 
-Network:
-- net.eth0.dns1=<IP>
-- net.eth0.proxy.type=[static|pac|none|unassigned]
-- net.eth0.proxy.host=<IP>
-- net.eth0.proxy.port=<port>
+| Param | Description | Default |
+| --- | --- | --- |
+| `qemu` | export param with the "ro.kernel." prefix; **NOT** `QEMU-KVM` related | 1 |
+| `androidboot.hardware` | specify `ro.boot.hardware` prop | redroid |
+| `redroid.width` | display width | 720 |
+| `redroid.height` | display height | 1280 |
+| `redroid.fps` | display FPS | auto-detect |
+| `androidboot.redroid_dpi` | display DPI | 320 |
+| `net.eth0.dns1` | DNS | 8.8.8.8 |
+| `net.eth0.proxy.type` | Proxy type; choose from: `static`, `pac`, `none`, `unassigned` | |
+| `net.eth0.proxy.host` | | |
+| `net.eth0.proxy.port` | | |
+| `redroid.gpu.mode` | choose from: `auto`, `host`, `guest`;<br>`guest`: use software rendering;<br>`host`: use GPU accelerated rendering;<br>`auto`: auto detect | `auto` |
+| `redroid.gpu.node` | | auto-detect |
+| `ro.xxx`| **DEBUG** purpose, allow override `ro.xxx` prop; For example, set `ro.secure=0`, then root adb shell provided by default | |
 
-GPU accelerating
-*ReDroid* use mesa3d to accelerate 3D rendering.
-Currently tested platforms:
-- AMD (arm64, amd64 with `amdgpu` driver)
-- Intel (amd64 with `i915` driver)
-- virtio-gpu (vendor agnostic, arm64 and amd64)
-
-params:
-- redroid.gpu.mode=[auto|host|guest]
-- redroid.gpu.node=[/dev/dri/renderDxxx]
-
-NOTE: you can override system props prefixed with `qemu.` or `ro.`. for example, you can set `ro.secure=0`, then 
-you can get root adb shell by default.
 
 ## Native Bridge Support
 It's possible to run `arm` Apps in `x86` *ReDroid* instance via `libhoudini`, `libndk_translator` or `QEMU translator`.

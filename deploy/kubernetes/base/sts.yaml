@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redroid11
+spec:
+  selector:
+    matchLabels:
+      app: redroid11
+  replicas: 1
+  serviceName: redroid
+  template:
+    metadata:
+      labels:
+        app: redroid11
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: redroid
+        image: redroid/redroid:11.0.0-latest
+        readinessProbe:
+          exec:
+            command:
+            - /system/bin/sh
+            - -c
+            - test "1" = "`/system/bin/getprop sys.boot_completed`"
+          initialDelaySeconds: 5
+        securityContext:
+          privileged: True
+        stdin: true
+        tty: true
+        volumeMounts:
+        - name: data
+          mountPath: /data
+      volumes:
+      - name: data
+        emptyDir: {}

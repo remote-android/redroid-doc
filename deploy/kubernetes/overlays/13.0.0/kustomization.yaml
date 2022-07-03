@@ -1,0 +1,23 @@
+bases:
+- ../../base
+
+images:
+- name: redroid/redroid
+  newTag: 13.0.0-latest
+
+patches:
+- target:
+    kind: StatefulSet
+  patch: |-
+    - op: replace
+      path: /metadata/name
+      value: redroid13
+    - op: replace
+      path: /spec/replicas
+      value: 1
+    - op: replace
+      path: /spec/selector/matchLabels/app
+      value: redroid13
+    - op: replace
+      path: /spec/template/metadata/labels/app
+      value: redroid13
