@@ -28,6 +28,7 @@ resort, it's always capable via customizing Linux kernel.
 - [Gentoo](gentoo.md)
 - [Kubernetes](kubernetes.md)
 - [Mint](mint.md)
+- [OpenEuler](openeuler.md)
 - [PopOS](pop_os.md)
 - [Ubuntu](ubuntu.md)
 - [WSL](wsl.md)
