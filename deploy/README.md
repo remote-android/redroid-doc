@@ -28,6 +28,7 @@ resort, it's always capable via customizing Linux kernel.
 - [Gentoo](gentoo.md)
 - [Kubernetes](kubernetes.md)
 - [Mint](mint.md)
+- [PopOS](pop_os.md)
 - [Ubuntu](ubuntu.md)
 - [WSL](wsl.md)
 
@@ -37,6 +38,12 @@ resort, it's always capable via customizing Linux kernel.
 ## install docker https://docs.docker.com/engine/install/#server
 
 ## make sure required kernel features enabled; Check details on per distro page
+
+## make sure cgroup v1 present (some latest OS may only mount cgroup v2, ubuntu 22.04 etc.)
+## add `systemd.unified_cgroup_hierarchy=0` to kernel cmdline
+
+## disable SELinux if present
+## setenforce 0
 
 
 ## running redroid
