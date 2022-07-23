@@ -24,6 +24,8 @@ uname -a > uname.txt
 
 lscpu > lscpu.txt
 
+getenforce &> getenforce.txt
+
 check_gpu() {
     lshw -C display
     ls -al /dev/dri/
