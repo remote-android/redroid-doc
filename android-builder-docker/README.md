@@ -2,6 +2,7 @@
 
 ## Sync Code
 ReDroid manifest include several branches / snapshots:
+- `redroid-13.0.0`
 - `redroid-12.0.0`
 - `redroid-11.0.0`
 - `redroid-10.0.0`
@@ -11,11 +12,6 @@ ReDroid manifest include several branches / snapshots:
 
 ```bash
 # fetch code
-
-# install git-lfs
-apt install git-lfs
-git lfs install
-
 mkdir ~/redroid && cd ~/redroid
 repo init -u https://github.com/remote-android/platform_manifests.git -b <REV> --depth=1
 repo sync -c
@@ -23,12 +19,8 @@ repo sync -c
 
 ## Build
 ```bash
-# create builder docker image (ubuntu 20.04)
-# adjust apt.conf and source.list if needed
+# create builder docker image
 docker build --build-arg userid=$(id -u) --build-arg groupid=$(id -g) --build-arg username=$(id -un) -t redroid-builder .
-
-# OR ubuntu 14.04 (old mesa3d release)
-docker build --build-arg userid=$(id -u) --build-arg groupid=$(id -g) --build-arg username=$(id -un) -t redroid-builder -f Dockerfile.1404 .
 
 # start builder
 docker run -it --rm --hostname redroid-builder --name redroid-builder -v <AOSP-SRC>:/src redroid-builder
@@ -40,8 +32,8 @@ cd /src
 
 lunch redroid_x86_64-userdebug
 # redroid_arm64-userdebug
-# redroid_x86_64_only-userdebug (64 bit only, redroid 12)
-# redroid_arm64_only-userdebug (64 bit only, redroid 12)
+# redroid_x86_64_only-userdebug (64 bit only, redroid 12+)
+# redroid_arm64_only-userdebug (64 bit only, redroid 12+)
 
 m
 
