@@ -77,30 +77,31 @@ docker run -itd --rm --privileged \
     -v ~/data:/data \
     -p 5555:5555 \
     redroid/redroid:11.0.0-latest \
-    redroid.width=1080 \
-    redroid.height=1920 \
+    androidboot.redroid_width=1080 \
+    androidboot.redroid_height=1920 \
     androidboot.redroid_dpi=480 \
 ```
 
 | Param | Description | Default |
 | --- | --- | --- |
-| `qemu` | export param with the "ro.kernel." prefix<br>**NOT** `QEMU-KVM` related | 1 |
+| `qemu` | export param with the "ro.kernel." prefix<br>**NOT** `QEMU-KVM` related, and plan to remove | 1 |
 | `androidboot.hardware` | specify `ro.boot.hardware` prop | redroid |
-| `redroid.width` | display width | 720 |
-| `redroid.height` | display height | 1280 |
-| `redroid.fps` | display FPS | 30(GPU enabled)<br> 15 (GPU not enabled)|
+| `androidboot.redroid_width` | display width | 720 |
+| `androidboot.redroid_height` | display height | 1280 |
+| `androidboot.redroid_fps` | display FPS | 30(GPU enabled)<br> 15 (GPU not enabled)|
 | `androidboot.redroid_dpi` | display DPI | 320 |
 | `androidboot.use_memfd` | use `memfd` to replace deprecated `ashmem`<br>plan to enable by default | false |
 | `androidboot.use_redroid_overlayfs` | use `overlayfs` to share `data` partition<br>`/data-base`: shared `data` partition<br>`/data-diff`: private data | 0 |
-| `net.eth0.dns1` | DNS | 8.8.8.8 |
-| `net.eth0.proxy.type` | Proxy type; choose from: `static`, `pac`, `none`, `unassigned` | |
-| `net.eth0.proxy.host` | | |
-| `net.eth0.proxy.port` | | |
-| `redroid.gpu.mode` | choose from: `auto`, `host`, `guest`;<br>`guest`: use software rendering;<br>`host`: use GPU accelerated rendering;<br>`auto`: auto detect | `auto` |
-| `redroid.gpu.node` | | auto-detect |
+| `androidboot.redroid_net_ndns` | number of DNS server, `8.8.8.8` will be used if no DNS server specified | 0 |
+| `androidboot.redroid_net_dns<1..N>` | DNS | |
+| `androidboot.redroid_net_proxy_type` | Proxy type; choose from: `static`, `pac`, `none`, `unassigned` | |
+| `androidboot.redroid_net_proxy_host` | | |
+| `androidboot.redroid_net_proxy_port` | | 3128 |
+| `androidboot.redroid_net_proxy_exclude_list` | comma seperated list | |
+| `androidboot.redroid_net_proxy_pac` | | |
+| `androidboot.redroid_gpu_mode` | choose from: `auto`, `host`, `guest`;<br>`guest`: use software rendering;<br>`host`: use GPU accelerated rendering;<br>`auto`: auto detect | `auto` |
+| `androidboot.redroid_gpu_node` | | auto-detect |
 | `ro.xxx`| **DEBUG** purpose, allow override `ro.xxx` prop; For example, set `ro.secure=0`, then root adb shell provided by default | |
-
-> Plan to migrate all params under `androidboot.` namespace
 
 
 ## Native Bridge Support
