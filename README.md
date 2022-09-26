@@ -135,25 +135,25 @@ system/
 FROM redroid/redroid:11.0.0-amd64
 
 ADD native-bridge.tar /
-
-COPY factory.prop /factory/factory.prop
-```
-
-```
-# factory.prop
-ro.product.cpu.abilist=x86_64,arm64-v8a,x86,armeabi-v7a,armeabi
-ro.product.cpu.abilist64=x86_64,arm64-v8a
-ro.product.cpu.abilist32=x86,armeabi-v7a,armeabi
-ro.dalvik.vm.isa.arm=x86
-ro.dalvik.vm.isa.arm64=x86_64
-ro.enable.native.bridge.exec=1
-ro.dalvik.vm.native.bridge=libndk_translation.so
-ro.ndk_translation.version=0.2.2
 ```
 
 ```bash
 # build docker image
 docker build . -t redroid:11.0.0-amd64-nb
+
+# running
+docker run -itd --rm --privileged \
+    -v ~/data11-nb:/data \
+    -p 5555:5555 \
+    redroid:11.0.0-amd64-nb \
+    ro.product.cpu.abilist=x86_64,arm64-v8a,x86,armeabi-v7a,armeabi \
+    ro.product.cpu.abilist64=x86_64,arm64-v8a \
+    ro.product.cpu.abilist32=x86,armeabi-v7a,armeabi \
+    ro.dalvik.vm.isa.arm=x86 \
+    ro.dalvik.vm.isa.arm64=x86_64 \
+    ro.enable.native.bridge.exec=1 \
+    ro.dalvik.vm.native.bridge=libndk_translation.so \
+    ro.ndk_translation.version=0.2.2
 ```
 
 Take a look at https://gitlab.com/android-generic/android_vendor_google_emu-x86 to extract automatically libndk_translator from the Android 11 emulator images. 
