@@ -42,6 +42,13 @@ if [ ! -z $1 ]; then
     docker exec $1 logcat -d > logcat.txt
     docker exec $1 logcat -d -b crash > crash.txt
     docker exec $1 getprop > getprop.txt
+    docker exec $1 dumpsys > dumpsys.txt
+
+    echo "************** ip rule" > network.txt
+    docker exec $1 ip rule >> network.txt
+    echo "************** ip r show table eth0" >> network.txt
+    docker exec $1 ip r list table eth0 >> network.txt
+
     docker inspect $1 > docker-inspect.txt
 fi
 
