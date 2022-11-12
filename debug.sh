@@ -3,7 +3,7 @@
 usage() {
     script=`basename "$0"`
     echo "USAGE: $script [container]"
-	echo;echo
+    echo;echo
 }
 usage
 
@@ -41,15 +41,20 @@ if [ ! -z $1 ]; then
     docker exec $1 ps -A > ps.txt
     docker exec $1 logcat -d > logcat.txt
     docker exec $1 logcat -d -b crash > crash.txt
+    docker exec $1 /vendor/bin/vainfo -a > vainfo.txt
     docker exec $1 getprop > getprop.txt
     docker exec $1 dumpsys > dumpsys.txt
 
-    echo "************** ip rule" > network.txt
-    docker exec $1 ip rule >> network.txt
-    echo "************** ip r show table eth0" >> network.txt
-    docker exec $1 ip r list table eth0 >> network.txt
-
-    docker inspect $1 > docker-inspect.txt
+<<'EOF' >network.txt  docker exec -i $1 sh
+    echo "************** ip a"
+    ip a
+    echo "************** ip rule"
+    ip rule
+    echo;echo "************** ip r show table eth0"
+    ip r list table eth0
+EOF
+    docker container inspect $1 > container-inspect.txt
+    docker image inspect `docker container inspect -f '{{.Config.Image}}' $1` > image-inspect.txt
 fi
 
 tmp_tar=${tmp_dir}.tgz
