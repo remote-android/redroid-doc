@@ -15,7 +15,7 @@ A clear and concise description of what the bug is.
 - `grep ashmem /proc/misc`
 
 **collect debug logs**
-`curl -fsSL https://raw.githubusercontent.com/remote-android/redroid-doc/master/debug.sh | bash -s -- [CONTAINER]`
+`curl -fsSL https://raw.githubusercontent.com/remote-android/redroid-doc/master/debug.sh | sudo bash -s -- [CONTAINER]`
 omit CONTAINER if not exist any more.
 
 **Screenshots**
