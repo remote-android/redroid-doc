@@ -9,7 +9,6 @@ English | [简体中文](README.zh-cn.md)
 - [WebRTC Streaming](#webrtc-streaming)
 - [How To Build](#how-to-build)
 - [Troubleshooting](#troubleshooting)
-- [Note](#note)
 - [Contact Me](#contact-me)
 - [License](#license)
 
@@ -21,13 +20,13 @@ instances in Linux host (`Docker`, `podman`, `k8s` etc.). *redroid* supports bot
 ![Screenshot of ReDroid 11](./assets/redroid11.png)
 
 Currently supported:
-- Android 13 (`redroid/redroid:13.0.0-latest`, `redroid/redroid:13.0.0-amd64`, `redroid/redroid:13.0.0-arm64`)
-- Android 12 (`redroid/redroid:12.0.0-latest`, `redroid/redroid:12.0.0-amd64`, `redroid/redroid:12.0.0-arm64`)
-- Android 12 64bit only (`redroid/redroid:12.0.0_64only-latest`, `redroid/redroid:12.0.0_64only-amd64`, `redroid/redroid:12.0.0_64only-arm64`)
-- Android 11 (`redroid/redroid:11.0.0-latest`, `redroid/redroid:11.0.0-amd64`, `redroid/redroid:11.0.0-arm64`)
-- Android 10 (`redroid/redroid:10.0.0-latest`, `redroid/redroid:10.0.0-amd64`, `redroid/redroid:10.0.0-arm64`)
-- Android 9 (`redroid/redroid:9.0.0-latest`, `redroid/redroid:9.0.0-amd64`, `redroid/redroid:9.0.0-arm64`)
-- Android 8.1 (`redroid/redroid:8.1.0-latest`, `redroid/redroid:8.1.0-amd64`, `redroid/redroid:8.1.0-arm64`)
+- Android 13 (`redroid/redroid:13.0.0-latest`)
+- Android 12 (`redroid/redroid:12.0.0-latest`)
+- Android 12 64bit only (`redroid/redroid:12.0.0_64only-latest`)
+- Android 11 (`redroid/redroid:11.0.0-latest`)
+- Android 10 (`redroid/redroid:10.0.0-latest`)
+- Android 9 (`redroid/redroid:9.0.0-latest`)
+- Android 8.1 (`redroid/redroid:8.1.0-latest`)
 
 
 ## Getting Started
@@ -84,8 +83,6 @@ docker run -itd --rm --privileged \
 
 | Param | Description | Default |
 | --- | --- | --- |
-| `qemu` | export param with the "ro.kernel." prefix<br>**NOT** `QEMU-KVM` related, and plan to remove | 1 |
-| `androidboot.hardware` | specify `ro.boot.hardware` prop | redroid |
 | `androidboot.redroid_width` | display width | 720 |
 | `androidboot.redroid_height` | display height | 1280 |
 | `androidboot.redroid_fps` | display FPS | 30(GPU enabled)<br> 15 (GPU not enabled)|
@@ -199,8 +196,6 @@ Check [android-builder-docker](./android-builder-docker) for details.
 
 
 ## WebRTC Streaming
-**CALL FOR HELP**
-
 Plan to port `WebRTC` solutions from `cuttlefish`, including frontend (HTML5), backend and many virtual HALs.
 
 ## How To Build
@@ -209,6 +204,11 @@ It's Same as AOSP building process. But I suggest to use `docker` to build.
 Check [android-builder-docker](./android-builder-docker) for details.
 
 ## Troubleshooting
+- How to collect debug blobs
+> `curl -fsSL https://raw.githubusercontent.com/remote-android/redroid-doc/master/debug.sh | sudo bash -s -- [CONTAINER]`
+>
+> omit *CONTAINER* if not exist any more
+
 - Container disappeared immediately
 > make sure the required kernel modules are installed; run `dmesg -T` for detailed logs
 
@@ -217,17 +217,9 @@ Check [android-builder-docker](./android-builder-docker) for details.
 >
 > try `dmesg -T` if cannot get a container shell
 
-
-## Note
-- `redroid` require `pid_max` less than 65535, or else may run into problems. Change in host OS, or add `pid_max` separation support in PID namespace
-- SElinux is disabled in *ReDroid*;
-- CGroups errors ignored; some (`stune` for example) not supported in generic linux.
-- `procfs` not fully seperated with host OS; Community use `lxcfs` and some cloud vendor ([TencentOS](https://github.com/Tencent/TencentOS-kernel)) enhanced in their own kernel.
-- `vintf` verify disabled
-
 ## Contact Me
-- ziyang.zhou@outlook.com
 - remote-android.slack.com (invite link: https://join.slack.com/t/remote-android/shared_invite/zt-q40byk2o-YHUgWXmNIUC1nweQj0L9gA)
+- ziyang.zhou@outlook.com
 
 ## License
 *ReDroid* itself is under [Apache License](https://www.apache.org/licenses/LICENSE-2.0), since *ReDroid* includes 
