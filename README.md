@@ -103,14 +103,12 @@ docker run -itd --rm --privileged \
 
 
 ## Native Bridge Support
-It's possible to run `arm` Apps in `x86` *ReDroid* instance via `libhoudini`, `libndk_translator` or `QEMU translator`.
+It's possible to run `arm` Apps in `x86` *ReDroid* instance via `libhoudini`, `libndk_translation` or `QEMU translator`.
 
-Take `libndk_translator` as an example:
+Check [@zhouziyang/libndk_translation](https://github.com/zhouziyang/libndk_translation) for prebuilt `libndk_translation`.
+Published `redroid` images (`redroid11` / `redroid12`) already get libndk_translation included.
 
 ``` bash
-# grab libndk_translator libs from Android 11 Emulator
-find /system \( -name 'libndk_translation*' -o -name '*arm*' -o -name 'ndk_translation*' \) | tar -cf native-bridge.tar -T -
-
 # example structure, be careful the file owner and mode
 
 system/
@@ -130,64 +128,21 @@ system/
 
 ```dockerfile
 # Dockerfile
-FROM redroid/redroid:11.0.0-amd64
+FROM redroid/redroid:11.0.0-latest
 
 ADD native-bridge.tar /
 ```
 
 ```bash
 # build docker image
-docker build . -t redroid:11.0.0-amd64-nb
+docker build . -t redroid:11.0.0-nb
 
 # running
 docker run -itd --rm --privileged \
     -v ~/data11-nb:/data \
     -p 5555:5555 \
-    redroid:11.0.0-amd64-nb \
-    ro.product.cpu.abilist=x86_64,arm64-v8a,x86,armeabi-v7a,armeabi \
-    ro.product.cpu.abilist64=x86_64,arm64-v8a \
-    ro.product.cpu.abilist32=x86,armeabi-v7a,armeabi \
-    ro.dalvik.vm.isa.arm=x86 \
-    ro.dalvik.vm.isa.arm64=x86_64 \
-    ro.enable.native.bridge.exec=1 \
-    ro.dalvik.vm.native.bridge=libndk_translation.so \
-    ro.ndk_translation.version=0.2.2
+    redroid:11.0.0-nb \
 ```
-
-Take a look at https://gitlab.com/android-generic/android_vendor_google_emu-x86 to extract automatically libndk_translator from the Android 11 emulator images. 
-
-After following the guide on "Building" section, you will get native-bridge.tar under vendor/google/emu-x86/proprietary.
-
-If you find errors in using libndk_translator, please try the following:
-
-- YOU MUST HAVE binfmt_misc kernel module loaded for supporting other binaries formats! If you have not loaded it already:
-
-  ```bash
-  sudo modprobe binfmt_misc
-  ```
-
-  or add binfmt_misc to /etc/modules to autoload it at boot (for example in Ubuntu). 
-
-  Check your specific distribution wiki/docs if you don't have binfmt_misc module and you want to install it, or how to autoload the module at boot.
-
-- Extract the native bridge archive, preserving the permissions, set specific permissions for allowing init file to be executed and traverse of important dirs:
-
-  ```bash
-  mkdir native-bridge
-  cd native-bridge
-  sudo tar -xpf ../native-bridge.tar `#or path to your actual native bridge tarball`
-  sudo chmod 0644 system/etc/init/ndk_translation_arm64.rc
-  sudo chmod 0755 system/bin/arm
-  sudo chmod 0755 system/bin/arm64
-  sudo chmod 0755 system/lib/arm
-  sudo chmod 0755 system/lib64/arm64
-  sudo chmod 0644 system/etc/binfmt_misc/*
-  sudo tar -cpf native-bridge.tar system
-  ```
-
-  Move or copy your new native-bridge.tar into the dir where you have written your Dockerfile, and rebuild again the new image with native bridge support. 
-  
-  You must use sudo or a root shell to preserve the permissions and owners of the files.
 
 ## GMS Support
 
