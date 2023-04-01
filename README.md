@@ -13,11 +13,11 @@ English | [简体中文](README.zh-cn.md)
 - [License](#license)
 
 ## Overview
-*ReDroid* (*Re*mote an*Droid*) is a GPU accelerated AIC (Android In Cloud) solution. You can boot many
+*redroid* (*Re*mote an*Droid*) is a GPU accelerated AIC (Android In Cloud) solution. You can boot many
 instances in Linux host (`Docker`, `podman`, `k8s` etc.). *redroid* supports both `arm64` and `amd64` architectures. 
-*ReDroid* is suitable for Cloud Gaming, Virtualise Phones, Automation Test and more.
+*redroid* is suitable for Cloud Gaming, Virtualise Phones, Automation Test and more.
 
-![Screenshot of ReDroid 11](./assets/redroid11.png)
+![Screenshot of redroid 11](./assets/redroid11.png)
 
 Currently supported:
 - Android 13 (`redroid/redroid:13.0.0-latest`)
@@ -103,7 +103,7 @@ docker run -itd --rm --privileged \
 
 
 ## Native Bridge Support
-It's possible to run `arm` Apps in `x86` *ReDroid* instance via `libhoudini`, `libndk_translation` or `QEMU translator`.
+It's possible to run `arm` Apps in `x86` *redroid* instance via `libhoudini`, `libndk_translation` or `QEMU translator`.
 
 Check [@zhouziyang/libndk_translation](https://github.com/zhouziyang/libndk_translation) for prebuilt `libndk_translation`.
 Published `redroid` images (`redroid11` / `redroid12`) already get libndk_translation included.
@@ -146,7 +146,7 @@ docker run -itd --rm --privileged \
 
 ## GMS Support
 
-It's possible to add GMS (Google Mobile Service) support in *ReDroid* via [Open GApps](https://opengapps.org/), [MicroG](https://microg.org/) or [MindTheGapps](https://gitlab.com/MindTheGapps/vendor_gapps).
+It's possible to add GMS (Google Mobile Service) support in *redroid* via [Open GApps](https://opengapps.org/), [MicroG](https://microg.org/) or [MindTheGapps](https://gitlab.com/MindTheGapps/vendor_gapps).
 
 Check [android-builder-docker](./android-builder-docker) for details.
 
@@ -178,7 +178,7 @@ Check [android-builder-docker](./android-builder-docker) for details.
 - ziyang.zhou@outlook.com
 
 ## License
-*ReDroid* itself is under [Apache License](https://www.apache.org/licenses/LICENSE-2.0), since *ReDroid* includes 
+*redroid* itself is under [Apache License](https://www.apache.org/licenses/LICENSE-2.0), since *redroid* includes 
 many 3rd party modules, you may need to examine license carefully.
 
-*ReDroid* kernel modules are under [GPL v2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+*redroid* kernel modules are under [GPL v2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)

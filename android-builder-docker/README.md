@@ -46,11 +46,11 @@ tar --xattrs -c -C root . | docker import -c 'ENTRYPOINT ["/init", "androidboot.
 
 ## Build with GApps
 
-You can build a ReDroid image with your favorite GApps package if you need, for simplicity there is an example with Mind The Gapps.
+You can build a redroid image with your favorite GApps package if you need, for simplicity there is an example with Mind The Gapps.
 
 This is not different from the normal building process, except for some small things, like:
 
-- When following the "Sync Code" paragraph,  after running the repo sync, add this manifest under .repo/local_manifests/mindthegapps.xml, for the specific ReDroid revision selected. 
+- When following the "Sync Code" paragraph,  after running the repo sync, add this manifest under .repo/local_manifests/mindthegapps.xml, for the specific redroid revision selected.
 
   For example, for Redroid 11 the revision is 'rho', and for Redroid 12 is 'sigma', and this is the expected manifest:
 
@@ -62,7 +62,7 @@ This is not different from the normal building process, except for some small th
   </manifest>
   ```
 
-- Add the path to the mk file corresponding to your selected arch to device/redroid/redroid_ARCHITECTURE/device.mk , for example we want x86_64 arch (x86 for ReDroid 11 as in 'rho' Mind The Gapps as only x86 GApps)
+- Add the path to the mk file corresponding to your selected arch to device/redroid/redroid_ARCHITECTURE/device.mk , for example we want x86_64 arch (x86 for redroid 11 as in 'rho' Mind The Gapps as only x86 GApps)
 
   ```makefile
   $(call inherit-product, vendor/gapps/x86_64/x86_64-vendor.mk)
@@ -72,7 +72,7 @@ This is not different from the normal building process, except for some small th
 
   Resync the repo with a new 'repo sync -c --no-tags' and continue following the building guide exactly as before.
 
-- OPTIONAL but recommended. While importing the image, change the entrypoint to 'ENTRYPOINT ["/init", "qemu=1", "androidboot.hardware=redroid", "ro.setupwizard.mode=DISABLED"]' , so you avoid doing it manually at every container start, or if you want set ro.setupwizard.mode=DISABLED at container start, skipping the GApps setup wizard at ReDroid boot.
+- OPTIONAL but recommended. While importing the image, change the entrypoint to 'ENTRYPOINT ["/init", "qemu=1", "androidboot.hardware=redroid", "ro.setupwizard.mode=DISABLED"]' , so you avoid doing it manually at every container start, or if you want set ro.setupwizard.mode=DISABLED at container start, skipping the GApps setup wizard at redroid boot.
 
 ## Note
 
