@@ -1,24 +1,29 @@
 # Build redroid with docker
 
-## Sync Code
 ```bash
+#####################
+# fetch code
+#####################
 mkdir ~/redroid && cd ~/redroid
 
 repo init -u https://github.com/remote-android/platform_manifests.git -b redroid-11.0.0 --depth=1 --git-lfs
 # check @remote-android/platform_manifests for supported branch / manifest
 
 repo sync -c
-```
 
-## Build
-```bash
-# create builder docker image
+#####################
+# create builder
+#####################
 docker build --build-arg userid=$(id -u) --build-arg groupid=$(id -g) --build-arg username=$(id -un) -t redroid-builder .
 
+#####################
 # start builder
+#####################
 docker run -it --rm --hostname redroid-builder --name redroid-builder -v ~/redroid:/src redroid-builder
 
-# *inside* builder container
+#####################
+# build redroid
+#####################
 cd /src
 
 . build/envsetup.sh
@@ -31,9 +36,10 @@ lunch redroid_x86_64-userdebug
 # start to build
 m
 
-# create redroid docker image in *HOST*
-cd <BUILD-OUT-DIR>
-# out/target/product/redroid...
+#####################
+# create redroid image in *HOST*
+#####################
+cd ~/redroid/out/target/product/redroid_x86_64
 
 sudo mount system.img system -o ro
 sudo mount vendor.img vendor -o ro
