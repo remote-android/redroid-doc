@@ -20,6 +20,8 @@ instances in Linux host (`Docker`, `podman`, `k8s` etc.). *redroid* supports bot
 ![Screenshot of redroid 11](./assets/redroid11.png)
 
 Currently supported:
+- Android 14 (`redroid/redroid:14.0.0-latest`)
+- Android 14 64bit only (`redroid/redroid:14.0.0_64only-latest`)
 - Android 13 (`redroid/redroid:13.0.0-latest`)
 - Android 13 64bit only (`redroid/redroid:13.0.0_64only-latest`)
 - Android 12 (`redroid/redroid:12.0.0-latest`)
