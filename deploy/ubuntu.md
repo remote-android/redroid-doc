@@ -1,33 +1,16 @@
 # Deploy redroid on ubuntu
 ```
-# for 5.0+ kernel
+##############################
+## Ubuntu 22.04
+##############################
 
-## Android required kernel features are packaged in `linux-modules-extra-xxx`
+## install required kernel modules
 apt install linux-modules-extra-`uname -r`
 modprobe binder_linux devices="binder,hwbinder,vndbinder"
+### optional module (removed since 5.18)
 modprobe ashmem_linux
 
-## auto load modules
-cat /etc/modules-load.d/redroid.conf
-binder_linux
-ashmem_linux
-
-cat /etc/modprobe.d/redroid.conf
-options binder_linux devices="binder,hwbinder,vndbinder"
-
-
-# for kernel version before 5.0
-
-## option A:
-### upgrade to 5.0+ kernel
-### https://wiki.ubuntu.com/Kernel/LTSEnablementStack
-
-## option B:
-### check https://github.com/remote-android/redroid-modules
-### to install out of tree `binderfs` / `ashmem` kernel modules
-
-
-# running redroid
+## running redroid
 docker run -itd --rm --privileged \
     --pull always \
     -v ~/data11:/data \
@@ -35,4 +18,31 @@ docker run -itd --rm --privileged \
     --name redroid11 \
     redroid/redroid:11.0.0-latest
 
+
+##############################
+## Ubuntu 20.04
+##############################
+
+## install required kernel modules
+apt install linux-modules-extra-`uname -r`
+modprobe binder_linux devices="binder,hwbinder,vndbinder"
+### optional module (removed since 5.18)
+modprobe ashmem_linux
+
+## running redroid normally
+
+
+##############################
+## Ubuntu 18.04
+##############################
+
+## upgrade kernel (5.0+)
+apt install linux-generic-hwe-18.04
+
+## install required kernel modules
+modprobe binder_linux devices="binder,hwbinder,vndbinder"
+### optional module (removed since 5.18)
+modprobe ashmem_linux
+
+## running redroid normally
 ```

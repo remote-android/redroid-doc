@@ -37,15 +37,15 @@ resort, it's always capable via customizing Linux kernel.
 **general deploy redroid instructions**
 ```
 ## install docker https://docs.docker.com/engine/install/#server
+## or use podman
 
 ## make sure required kernel features enabled; Check details on per distro page
 
-## make sure cgroup v1 present (some latest OS may only mount cgroup v2, ubuntu 22.04 etc.)
+## make sure cgroup v1 mounted if running redroid 8 / 9
 ## add `systemd.unified_cgroup_hierarchy=0` to kernel cmdline
 
 ## disable SELinux if present
-## setenforce 0
-
+setenforce 0
 
 ## running redroid
 docker run -itd --rm --privileged \
@@ -72,24 +72,12 @@ scrcpy -s localhost:5555
 ###     typically running scrcpy on your local PC
 
 
-## running without `ashmem` (removed since linux 5.18)
-## NOTE: plan to enable `memfd` by default
-docker run -itd --rm --privileged \
-    --pull always \
-    -v ~/data11:/data \
-    -p 5555:5555 \
-    --name redroid11 \
-    redroid/redroid:11.0.0-latest \
-    androidboot.use_memfd=1
-
-
-## running 64bit-only redroid (only redroid12 published)
-## some ARM CPUs only support 64bit mode, or just want to remove legacy 32bit runtime
+## running 64bit-only redroid
+## only `aarch64` supported by some Arm platforms, the 64only image required here
 docker run -itd --rm --privileged \
     --pull always \
     -v ~/data12_64only:/data \
     -p 5555:5555 \
     --name redroid12_64only \
     redroid/redroid:12.0.0_64only-latest \
-
 ```
