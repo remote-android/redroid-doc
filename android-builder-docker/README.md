@@ -86,7 +86,7 @@ This is not different from the normal building process, except for some small th
   </manifest>
   ```
 
-- Add the path to the mk file corresponding to your selected arch to device/redroid/redroid_ARCHITECTURE/device.mk , for example we want x86_64 arch (x86 for redroid 11 as in 'rho' Mind The Gapps as only x86 GApps)
+- Add the path to the mk file corresponding to your selected arch to `device/redroid/redroid_ARCHITECTURE/device.mk` , for example we want x86_64 arch (x86 for redroid 11 as in 'rho' Mind The Gapps as only x86 GApps)
 
   ```makefile
   $(call inherit-product, vendor/gapps/x86_64/x86_64-vendor.mk)
@@ -94,20 +94,6 @@ This is not different from the normal building process, except for some small th
 
   putting this, modified for the corresponding architecture you need. So change 'x86_64' with arm64 if you need arm64 GApps.
 
-  Resync the repo with a new 'repo sync -c --no-tags' and continue following the building guide exactly as before.
+  Resync the repo with a new `repo sync -c` and continue following the building guide exactly as before.
 
-- OPTIONAL but recommended. While importing the image, change the entrypoint to 'ENTRYPOINT ["/init", "qemu=1", "androidboot.hardware=redroid", "ro.setupwizard.mode=DISABLED"]' , so you avoid doing it manually at every container start, or if you want set ro.setupwizard.mode=DISABLED at container start, skipping the GApps setup wizard at redroid boot.
-
-## Note
-
-```bash
-# intent changes for redroid-10 (copyfile hook during repo sync), DO NOT PANIC
-# [Android Clang/LLVM Toolchain](https://github.com/remote-android/platform_manifests/tree/llvm-toolchain-redroid-10.0.0)
-
-project prebuilts/clang/host/linux-x86/         (*** NO BRANCH ***)
- -m     clang-r353983c/lib64/clang/9.0.3/lib/linux/libclang_rt.scudo_minimal-aarch64-android.a
- -m     clang-r353983c/lib64/clang/9.0.3/lib/linux/libclang_rt.scudo_minimal-arm-android.a
- -m     clang-r353983c/lib64/clang/9.0.3/lib/linux/libclang_rt.scudo_minimal-i686-android.a
- -m     clang-r353983c/lib64/clang/9.0.3/lib/linux/libclang_rt.scudo_minimal-x86_64-android.a
-```
-
+- OPTIONAL but recommended. While importing the image, change the entrypoint to 'ENTRYPOINT ["/init", "androidboot.hardware=redroid", "ro.setupwizard.mode=DISABLED"]' , so you avoid doing it manually at every container start, or if you want set `ro.setupwizard.mode=DISABLED` at container start, skipping the GApps setup wizard at redroid boot.

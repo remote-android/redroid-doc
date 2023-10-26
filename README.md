@@ -108,7 +108,7 @@ docker run -itd --rm --privileged \
 It's possible to run `arm` Apps in `x86` *redroid* instance via `libhoudini`, `libndk_translation` or `QEMU translator`.
 
 Check [@zhouziyang/libndk_translation](https://github.com/zhouziyang/libndk_translation) for prebuilt `libndk_translation`.
-Published `redroid` images (`redroid11` / `redroid12`) already get libndk_translation included.
+Published `redroid` images already got `libndk_translation` included.
 
 ``` bash
 # example structure, be careful the file owner and mode
