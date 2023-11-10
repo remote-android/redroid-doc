@@ -5,7 +5,7 @@
 ## Deepin 20.9
 ##############################
 
-mkdir 666 /dev/{,hw,vnd}binder
+chmod 666 /dev/{,hw,vnd}binder
 
 ### install podman: https://github.com/mgoltzsche/podman-static
 
