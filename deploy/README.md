@@ -24,6 +24,7 @@ resort, it's always capable via customizing Linux kernel.
 - [Arch-Linux](arch-linux.md)
 - [CentOS](centos.md)
 - [Debian](debian.md)
+- [Deepin](deepin.md)
 - [Fedora](fedora.md)
 - [Gentoo](gentoo.md)
 - [Kubernetes](kubernetes.md)
