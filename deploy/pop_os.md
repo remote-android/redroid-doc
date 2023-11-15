@@ -7,6 +7,9 @@
 
 ## install linux-xanmod (https://xanmod.org) to get binderfs support
 
+## enable PSI in /etc/default/grub
+## GRUB_CMDLINE_LINUX_DEFAULT="... psi=1"
+
 ## run redroid
 docker run -itd --rm --privileged \
     --pull always \
