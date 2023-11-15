@@ -42,9 +42,6 @@ resort, it's always capable via customizing Linux kernel.
 
 ## make sure required kernel features enabled; Check details on per distro page
 
-## make sure cgroup v1 mounted if running redroid 8 / 9
-## add `systemd.unified_cgroup_hierarchy=0` to kernel cmdline
-
 ## disable SELinux if present
 setenforce 0
 
