@@ -39,6 +39,9 @@ modprobe ashmem_linux
 ## upgrade kernel (5.0+)
 apt install linux-generic-hwe-18.04
 
+## add possible missing kernel module
+modprobe nfnetlink
+
 ## install required kernel modules
 modprobe binder_linux devices="binder,hwbinder,vndbinder"
 ### optional module (removed since 5.18)
