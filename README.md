@@ -58,6 +58,9 @@ docker run -itd --rm --privileged \
 ###   -v ~/data:/data  -- mount data partition
 ###   -p 5555:5555     -- expose adb port
 
+### DISCLAIMER
+### Should NOT expose adb port on public network
+### otherwise, redroid container (even host OS) may get compromised
 
 ## install adb https://developer.android.com/studio#downloads
 adb connect localhost:5555
