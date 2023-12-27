@@ -28,6 +28,7 @@ resort, it's always capable via customizing Linux kernel.
 - [Fedora](fedora.md)
 - [Gentoo](gentoo.md)
 - [Kubernetes](kubernetes.md)
+- [LXC](lxc.md)
 - [Mint](mint.md)
 - [OpenEuler](openeuler.md)
 - [PopOS](pop_os.md)
