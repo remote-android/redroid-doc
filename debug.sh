@@ -20,7 +20,7 @@ container=$1
 
 if [[ -z "$container" ]]; then
     echo -n "Container name (leave empty if stopped):"
-    read container
+    read container < /dev/tty
 fi
 
 echo "Collecting, please wait..."
