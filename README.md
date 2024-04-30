@@ -33,7 +33,7 @@ Currently supported:
 
 
 ## Getting Started
-*redroid* should capabale running on any linux (with some kernel features enabled).
+*redroid* should be able to run on any linux distribution (with some kernel features enabled).
 
 Quick start on *Ubuntu 20.04* here; Check [deploy section](deploy/README.md) for other distros.
 
@@ -160,7 +160,7 @@ Check [android-builder-docker](./android-builder-docker) for details.
 Plan to port `WebRTC` solutions from `cuttlefish`, including frontend (HTML5), backend and many virtual HALs.
 
 ## How To Build
-It's Same as AOSP building process. But I suggest to use `docker` to build.
+It's the same way as AOSP building process, but I suggest to use `docker` to build it.
 
 Check [android-builder-docker](./android-builder-docker) for details.
 

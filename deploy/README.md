@@ -1,7 +1,7 @@
 # Deploy redroid 
 
-*redroid* should capable to run on any Linux environment as long as the 
-required kernel features available (`binderfs` etc.). Fortunately, these 
+*redroid* should be able to run on any Linux environment as long as the 
+required kernel features are available (`binderfs`, etc.). Fortunately, these 
 kernel features are already enabled in some Linux distros
 (extra packages might needed). *redroid* also provides
 [redroid-modules](https://github.com/remote-android/redroid-modules) repo
@@ -9,7 +9,7 @@ to support those distros without the required kernel features. And as last
 resort, it's always capable via customizing Linux kernel.
 
 
-**madatory kernel features**
+**mandatory kernel features**
 - `binderfs`
 - `ashmem` / `memfd`
 - `IPv6`
