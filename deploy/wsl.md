@@ -35,7 +35,7 @@ CONFIG_ANDROID_BINDERFS=y
 CONFIG_ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder"
 
 ## install required libraries to build kernel
-sudo apt install make gcc flex bison libssl-dev libelf-dev -y
+sudo apt install make gcc flex bison libssl-dev libelf-dev dwarves -y
 
 ## build kernel
 make
