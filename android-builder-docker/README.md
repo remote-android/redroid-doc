@@ -41,20 +41,11 @@ repo init -u https://android.googlesource.com/platform/manifest --git-lfs --dept
 git clone https://github.com/remote-android/local_manifests.git ~/redroid/.repo/local_manifests -b 12.0.0
 
 # sync code | ~100GB of data | ~20 minutes on a fast CPU + connection
-repo sync -c
-
-# apply redroid patches
-git clone https://github.com/remote-android/redroid-patches.git ~/redroid-patches
-~/redroid-patches/apply-patch.sh ~/redroid
+repo sync -c -j$(nproc)
 
 # get latest Dockerfile from Redroid repository
 wget https://raw.githubusercontent.com/remote-android/redroid-doc/master/android-builder-docker/Dockerfile
-
-# This command will pull all large files managed by Git LFS (Large File Storage) in the specified group of repositories.
-# In our case we need to pull the `Webview.apk` files that are not pulled by default
-repo forall -g lfs -c 'git lfs pull'
 ```
-
 #### 3) GApps (optional)
 ##### In case you want to add GApps to your build (PlayStore, etc), you can follow these steps, otherwise, just skip it
 - Add this manifest under `.repo/local_manifests/mindthegapps.xml`, for the specific redroid revision selected.
@@ -75,12 +66,16 @@ repo forall -g lfs -c 'git lfs pull'
   ```
 - Resync `~/redroid`
   ```
-  repo sync -c
+  repo sync -c -j$(nproc)
   ```
 - OPTIONAL but recommended. While importing the image in the Step 6 (docker import command), change the entrypoint to 'ENTRYPOINT ["/init", "androidboot.hardware=redroid", "ro.setupwizard.mode=DISABLED"]', so you avoid doing it manually at every container start, or if you want set `ro.setupwizard.mode=DISABLED` at container start, skipping the GApps setup wizard at redroid boot. Optional line available in Step 6.
 
-#### 4) Create and start builder
+#### 4) Apply Redroid patches, create builder and start it
 ```
+# apply redroid patches
+git clone https://github.com/remote-android/redroid-patches.git ~/redroid-patches
+~/redroid-patches/apply-patch.sh ~/redroid
+
 docker buildx create --use
 docker buildx build --build-arg userid=$(id -u) --build-arg groupid=$(id -g) --build-arg username=$(id -un) -t redroid-builder --load .
 docker run -it --privileged --rm --hostname redroid-builder --name redroid-builder -v ~/redroid:/src redroid-builder
@@ -98,7 +93,7 @@ lunch redroid_arm64-userdebug
 # redroid_arm64_only-userdebug (64 bit only, redroid 12+)
 
 # start to build | + ~50GB of data
-m -j${nproc}
+m -j$(nproc)
 
 exit
 ```
