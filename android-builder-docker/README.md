@@ -57,7 +57,7 @@ wget https://raw.githubusercontent.com/remote-android/redroid-doc/master/android
     <project path="vendor/gapps" name="vendor_gapps" revision="sigma" remote="mtg" />
   </manifest>
   ```
-  You can add manually ↑ or with this 1 line command that will create and write to the file ↓ (remember to set proper revision)
+  You can add manually **↑** or with this 1 line command **↓** that will create and write to the file (remember to set proper revision)
   ```
   echo -e '<?xml version="1.0" encoding="UTF-8"?>\n<manifest>\n  <remote name="mtg" fetch="https://gitlab.com/MindTheGapps/" />\n  <project path="vendor/gapps" name="vendor_gapps" revision="sigma" remote="mtg" />\n</manifest>' > ~/redroid/.repo/local_manifests/mindthegapps.xml
   ```
@@ -68,17 +68,17 @@ wget https://raw.githubusercontent.com/remote-android/redroid-doc/master/android
   ```makefile
   $(call inherit-product, vendor/gapps/arm64/arm64-vendor.mk)
   ```
-
-- Patch GApps files
+- Resync `~/redroid` | Fetch GApps code
   ```
-  # You can run the lines below from within the Docker container "/src" or outside of it "~/redroid/" (in the host).
-  # Set the correct path of your choice before running them
-  
-  # First we comment out some lines in "vendor/gapps/arm64/arm64-vendor.mk"
-  sed -i '/^PRODUCT_COPY_FILES += /s/^/#/' vendor/gapps/arm64/arm64-vendor.mk
-  sed -i '/vendor\/gapps\/arm64\/proprietary\/product/s/^/#/' vendor/gapps/arm64/arm64-vendor.mk
+  repo sync -c -j$(nproc)
+  ```
+- Patch GApps files
+  ```  
+  # First we comment out some lines in "~/redroid/vendor/gapps/arm64/arm64-vendor.mk"
+  sed -i '/^PRODUCT_COPY_FILES += /s/^/#/' ~/redroid/vendor/gapps/arm64/arm64-vendor.mk
+  sed -i '/vendor\/gapps\/arm64\/proprietary\/product/s/^/#/' ~/redroid/vendor/gapps/arm64/arm64-vendor.mk
 
-  # Then we create the "vendor/gapps/arm64/proprietary/product/app/MarkupGoogle/Android.bp"
+  # Then we create the "~/redroid/vendor/gapps/arm64/proprietary/product/app/MarkupGoogle/Android.bp"
   echo 'cc_prebuilt_library_shared {
       name: "libsketchology_native",
       srcs: ["lib/arm64/libsketchology_native.so"],
@@ -86,16 +86,12 @@ wget https://raw.githubusercontent.com/remote-android/redroid-doc/master/android
       stl: "none",
       system_shared_libs: [],
       vendor: true,
-  }' > vendor/gapps/arm64/proprietary/product/app/MarkupGoogle/Android.bp
+  }' > ~/redroid/vendor/gapps/arm64/proprietary/product/app/MarkupGoogle/Android.bp
 
-  # And add some entries to the end of "vendor/gapps/arm64/Android.bp" file
-  sed -i '$a cc_prebuilt_library_shared {\n    name: "libjni_latinimegoogle",\n    srcs: ["proprietary/product/lib/libjni_latinimegoogle.so"],\n    shared_libs: [],\n    stl: "none",\n    system_shared_libs: [],\n    vendor: true,\n}\n\ncc_prebuilt_library_shared {\n    name: "libjni_latinimegoogle_64",\n    srcs: ["proprietary/product/lib64/libjni_latinimegoogle.so"],\n    shared_libs: [],\n    stl: "none",\n    system_shared_libs: [],\n    vendor: true,\n}' vendor/gapps/arm64/Android.bp
+  # And add some entries to the end of "~/redroid/vendor/gapps/arm64/Android.bp" file
+  sed -i '$a cc_prebuilt_library_shared {\n    name: "libjni_latinimegoogle",\n    srcs: ["proprietary/product/lib/libjni_latinimegoogle.so"],\n    shared_libs: [],\n    stl: "none",\n    system_shared_libs: [],\n    vendor: true,\n}\n\ncc_prebuilt_library_shared {\n    name: "libjni_latinimegoogle_64",\n    srcs: ["proprietary/product/lib64/libjni_latinimegoogle.so"],\n    shared_libs: [],\n    stl: "none",\n    system_shared_libs: [],\n    vendor: true,\n}' ~/redroid/vendor/gapps/arm64/Android.bp
   ```
   
-- Resync `~/redroid`
-  ```
-  repo sync -c -j$(nproc)
-  ```
 - OPTIONAL (recommended)
   
   While importing the image in the Step 6 (docker import command), change the entrypoint to `ENTRYPOINT ["/init", "androidboot.hardware=redroid", "ro.setupwizard.mode=DISABLED"]`, so you avoid doing it manually at every container start, or if you want set `ro.setupwizard.mode=DISABLED` at container start, skipping the GApps setup wizard at redroid boot. Optional line available in Step 6.
