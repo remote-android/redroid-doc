@@ -1,6 +1,6 @@
 # Build Redroid with Docker
 ```
-WARNING: YOU NEED ~180GB OF FREE SPACE ON HDD TO COMPLETE THE WHOLE PROCESS
+WARNING: YOU NEED ~200GB OF FREE SPACE ON HDD TO COMPLETE THE WHOLE PROCESS (~250GB IF BUILDING WITH GAPPS)
 ```
 #### 1) Setup
 ```
@@ -57,6 +57,10 @@ wget https://raw.githubusercontent.com/remote-android/redroid-doc/master/android
     <project path="vendor/gapps" name="vendor_gapps" revision="sigma" remote="mtg" />
   </manifest>
   ```
+  You can add manually ↑ or with this 1 line command that will create and write to the file ↓ (remember to set proper revision)
+  ```
+  echo -e '<?xml version="1.0" encoding="UTF-8"?>\n<manifest>\n  <remote name="mtg" fetch="https://gitlab.com/MindTheGapps/" />\n  <project path="vendor/gapps" name="vendor_gapps" revision="sigma" remote="mtg" />\n</manifest>' > ~/redroid/.repo/local_manifests/mindthegapps.xml
+  ```
 - Add the path to the mk file corresponding to your selected arch `~/redroid/device/redroid/redroid_ARCHITECTURE/device.mk`, for example if we want arm64 arch (arm64 for Redroid 12 as in 'sigma' Mind The Gapps, as only arm64 GApps)
   ```
   nano ~/redroid/device/redroid/redroid_arm64/device.mk
@@ -64,11 +68,37 @@ wget https://raw.githubusercontent.com/remote-android/redroid-doc/master/android
   ```makefile
   $(call inherit-product, vendor/gapps/arm64/arm64-vendor.mk)
   ```
+
+- Patch GApps files
+  ```
+  # You can run the lines below from within the Docker container "/src" or outside of it "~/redroid/" (in the host).
+  # Set the correct path of your choice before running them
+  
+  # First we comment out some lines in "vendor/gapps/arm64/arm64-vendor.mk"
+  sed -i '/^PRODUCT_COPY_FILES += /s/^/#/' vendor/gapps/arm64/arm64-vendor.mk
+  sed -i '/vendor\/gapps\/arm64\/proprietary\/product/s/^/#/' vendor/gapps/arm64/arm64-vendor.mk
+
+  # Then we create the "vendor/gapps/arm64/proprietary/product/app/MarkupGoogle/Android.bp"
+  echo 'cc_prebuilt_library_shared {
+      name: "libsketchology_native",
+      srcs: ["lib/arm64/libsketchology_native.so"],
+      shared_libs: [],
+      stl: "none",
+      system_shared_libs: [],
+      vendor: true,
+  }' > vendor/gapps/arm64/proprietary/product/app/MarkupGoogle/Android.bp
+
+  # And add some entries to the end of "vendor/gapps/arm64/Android.bp" file
+  sed -i '$a cc_prebuilt_library_shared {\n    name: "libjni_latinimegoogle",\n    srcs: ["proprietary/product/lib/libjni_latinimegoogle.so"],\n    shared_libs: [],\n    stl: "none",\n    system_shared_libs: [],\n    vendor: true,\n}\n\ncc_prebuilt_library_shared {\n    name: "libjni_latinimegoogle_64",\n    srcs: ["proprietary/product/lib64/libjni_latinimegoogle.so"],\n    shared_libs: [],\n    stl: "none",\n    system_shared_libs: [],\n    vendor: true,\n}' vendor/gapps/arm64/Android.bp
+  ```
+  
 - Resync `~/redroid`
   ```
   repo sync -c -j$(nproc)
   ```
-- OPTIONAL but recommended. While importing the image in the Step 6 (docker import command), change the entrypoint to 'ENTRYPOINT ["/init", "androidboot.hardware=redroid", "ro.setupwizard.mode=DISABLED"]', so you avoid doing it manually at every container start, or if you want set `ro.setupwizard.mode=DISABLED` at container start, skipping the GApps setup wizard at redroid boot. Optional line available in Step 6.
+- OPTIONAL (recommended)
+  
+  While importing the image in the Step 6 (docker import command), change the entrypoint to `ENTRYPOINT ["/init", "androidboot.hardware=redroid", "ro.setupwizard.mode=DISABLED"]`, so you avoid doing it manually at every container start, or if you want set `ro.setupwizard.mode=DISABLED` at container start, skipping the GApps setup wizard at redroid boot. Optional line available in Step 6.
 
 #### 4) Apply Redroid patches, create builder and start it
 ```
@@ -92,7 +122,7 @@ lunch redroid_arm64-userdebug
 # redroid_x86_64_only-userdebug (64 bit only, redroid 12+)
 # redroid_arm64_only-userdebug (64 bit only, redroid 12+)
 
-# start to build | + ~50GB of data
+# start to build | + ~100GB of data | ~ 2 hours on a fast cpu
 m -j$(nproc)
 
 exit
@@ -103,9 +133,7 @@ cd ~/redroid/out/target/product/redroid_arm64
 sudo mount system.img system -o ro
 sudo mount vendor.img vendor -o ro
 
-# set the target platform or multiplatform for this Docker image we're creating with the --platform flag in 'docker import' command below
-# docker import --platform=linux/arm64,linux/amd64 .... etc
-
+# set the target platform(s) with the '--platform flag' below. eg: --platform=linux/arm64,linux/amd64 ....
 sudo tar --xattrs -c vendor -C system --exclude="./vendor" . | docker import --platform=linux/arm64 -c 'ENTRYPOINT ["/init", "qemu=1", "androidboot.hardware=redroid"]' - redroid
 # execute only ↑ (without Step 3 Gapps) or ↓ (with Step 3 Gapps) | (OPTIONAL)
 sudo tar --xattrs -c vendor -C system --exclude="./vendor" . | docker import --platform=linux/arm64 -c 'ENTRYPOINT ["/init", "qemu=1", "androidboot.hardware=redroid", "ro.setupwizard.mode=DISABLED"]' - redroid
@@ -124,7 +152,7 @@ docker inspect redroid:latest | jq '.[0].Config.Entrypoint, .[0].Architecture'
 ]
 "arm64"
 ```
-#### 7) Tag and push image to Docker Hub
+#### 7) Tag and push image to Docker Hub (optional)
 ##### Now you can tag the docker image to your personal docker account and push it to Docker Hub
 ```
 # Get the container ID of the imported Docker image
@@ -138,4 +166,10 @@ docker tag b00684099b2d YourDockerAccount/redroid:12.0.0_arm64-latest
 # Push it to Docker Hub
 docker login
 docker push YourDockerAccount/redroid:12.0.0_arm64-latest
+```
+#### 8) Run the container
+```
+docker run -itd --privileged --name Redroid12 -v ~/data:/data -p 5555:5555 YourDockerAccount/redroid:12.0.0_arm64-latest
+# or just use the default tag if you skipped Step 7
+docker run -itd --privileged --name Redroid12 -v ~/data:/data -p 5555:5555 redroid:latest
 ```
