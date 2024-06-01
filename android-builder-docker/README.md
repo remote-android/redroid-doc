@@ -27,8 +27,8 @@ sudo systemctl restart docker
 
 # check if Docker is running
 docker --version && docker ps -as
-Docker version 24.0.5, build 24.0.5-0ubuntu1~22.04.1
-CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES     SIZE
+# Docker version 24.0.5, build 24.0.5-0ubuntu1~22.04.1
+# CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES     SIZE
 ```
 #### 2) Fetch and sync Android and Redroid codes
 ```
