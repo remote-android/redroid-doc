@@ -8,7 +8,7 @@ ARG username
 
 # COPY sources.list etc/apt/sources.list
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
     && echo "install package for building AOSP" \
@@ -36,4 +36,4 @@ ENV HOME=/home/$username \
     PATH=/src/.repo/repo:/src/prebuilts/jdk/jdk8/linux-x86/bin/:$PATH
 
 
-ENTRYPOINT chroot --userspec=$(cat /root/username):$(cat /root/username) / /bin/bash -i
+ENTRYPOINT ["sh", "-c", "chroot --userspec=$(cat /root/username):$(cat /root/username) / /bin/bash -i"]
