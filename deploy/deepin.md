@@ -2,6 +2,23 @@
 
 ```
 ##############################
+## Deepin 23
+##############################
+
+### install podman or docker
+apt install podman
+
+### start redroid
+mkdir ~/data11
+podman run -itd --rm --privileged \
+    --pull always \
+    -v ~/data11:/data \
+    -p 5555:5555 \
+    --name redroid11 \
+    redroid/redroid:11.0.0-latest
+
+
+##############################
 ## Deepin 20.9
 ##############################
 
