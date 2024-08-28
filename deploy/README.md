@@ -31,6 +31,7 @@ resort, it's always capable via customizing Linux kernel.
 - [LXC](lxc.md)
 - [Mint](mint.md)
 - [OpenEuler](openeuler.md)
+- [openKylin](openkylin.md)
 - [PopOS](pop_os.md)
 - [Ubuntu](ubuntu.md)
 - [WSL](wsl.md)
