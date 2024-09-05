@@ -104,7 +104,7 @@ docker run -itd --rm --privileged \
 | `androidboot.redroid_net_proxy_port` | | 3128 |
 | `androidboot.redroid_net_proxy_exclude_list` | comma seperated list | |
 | `androidboot.redroid_net_proxy_pac` | | |
-| `androidboot.redroid_gpu_mode` | choose from: `auto`, `host`, `guest`;<br>`guest`: use software rendering;<br>`host`: use GPU accelerated rendering;<br>`auto`: auto detect | `auto` |
+| `androidboot.redroid_gpu_mode` | choose from: `auto`, `host`, `guest`;<br>`guest`: use software rendering;<br>`host`: use GPU accelerated rendering;<br>`auto`: auto detect | `guest` |
 | `androidboot.redroid_gpu_node` | | auto-detect |
 | `ro.xxx`| **DEBUG** purpose, allow override `ro.xxx` prop; For example, set `ro.secure=0`, then root adb shell provided by default | |
 
