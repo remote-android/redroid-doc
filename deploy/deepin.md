@@ -15,7 +15,7 @@ podman run -itd --rm --privileged \
     -v ~/data11:/data \
     -p 5555:5555 \
     --name redroid11 \
-    redroid/redroid:11.0.0-latest
+    redroid/redroid:12.0.0_64only-latest
 
 
 ##############################
@@ -33,7 +33,7 @@ podman run -itd --rm --privileged \
     -v ~/data11:/data \
     -p 5555:5555 \
     --name redroid11 \
-    redroid/redroid:11.0.0-latest
+    redroid/redroid:12.0.0_64only-latest
 
 ### NOTE:
 ### You can start only one redroid container at the same time.

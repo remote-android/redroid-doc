@@ -18,12 +18,11 @@ CONFIG_ANDROID_BINDERFS=y
 CONFIG_ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder"
 
 
-## run with memfd enabled
+## run redroid
 docker run -itd --rm --privileged \
     --pull always \
     -v ~/data11:/data \
     -p 5555:5555 \
     --name redroid11 \
-    redroid/redroid:11.0.0-latest \
-    androidboot.use_memfd=1
+    redroid/redroid:12.0.0_64only-latest
 ```

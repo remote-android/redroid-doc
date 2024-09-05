@@ -21,7 +21,7 @@ sed -i 's/set -eu/set -u/g' /usr/share/lxc/templates/lxc-oci
 apt install skopeo umoci jq
 
 ## create redroid container
-lxc-create -n redroid11 -t oci -- -u docker://docker.io/redroid/redroid:11.0.0-latest
+lxc-create -n redroid11 -t oci -- -u docker://docker.io/redroid/redroid:12.0.0_64only-latest
 
 ## adjust container config
 mkdir $HOME/data-redroid11

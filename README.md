@@ -53,7 +53,7 @@ docker run -itd --rm --privileged \
     --pull always \
     -v ~/data:/data \
     -p 5555:5555 \
-    redroid/redroid:11.0.0-latest
+    redroid/redroid:12.0.0_64only-latest
 
 ### Explanation:
 ###   --pull always    -- use latest image
@@ -83,7 +83,7 @@ docker run -itd --rm --privileged \
     --pull always \
     -v ~/data:/data \
     -p 5555:5555 \
-    redroid/redroid:11.0.0-latest \
+    redroid/redroid:12.0.0_64only-latest \
     androidboot.redroid_width=1080 \
     androidboot.redroid_height=1920 \
     androidboot.redroid_dpi=480 \
