@@ -183,7 +183,7 @@ Check [android-builder-docker](./android-builder-docker) for details.
 > try `dmesg -T` if cannot get a container shell
 
 ## Contact Me
-- remote-android.slack.com (invite link: https://join.slack.com/t/remote-android/shared_invite/zt-q40byk2o-YHUgWXmNIUC1nweQj0L9gA)
+- remote-android.slack.com (invite link: https://join.slack.com/t/remote-android/shared_invite/zt-387g26jdj-5kyINRegb_9BtYALktKtbA)
 - ziyang.zhou@outlook.com
 
 ## License
