@@ -17,7 +17,7 @@
 实例 (`Docker`, `podman`, `k8s` etc.). *redroid* 支持 `arm64` 和 `amd64` 架构. 
 *redroid* 适用于云游戏, 虚拟手机, 自动测试以及更多场景.
 
-![Screenshot of redroid 11](./assets/redroid11.png)
+![Screenshot of redroid 11](./assets/redroid17.png)
 
 目前支持:
 - Android 16 (`redroid/redroid:16.0.0-latest`)
