@@ -49,15 +49,12 @@ Quick start on *Ubuntu 20.04* here; Check [deploy section](deploy/README.md) for
 ## install required kernel modules
 apt install linux-modules-extra-`uname -r`
 modprobe binder_linux devices="binder,hwbinder,vndbinder"
+# No need for android 17+
 modprobe ashmem_linux
 
 
 ## running redroid
-docker run -itd --rm --privileged \
-    --pull always \
-    -v ~/data:/data \
-    -p 5555:5555 \
-    redroid/redroid:12.0.0_64only-latest
+docker run -itd --rm --privileged --pull always -v ~/data:/data -p 5555:5555 redroid/redroid:12.0.0_64only-latest
 
 ### Explanation:
 ###   --pull always    -- use latest image
