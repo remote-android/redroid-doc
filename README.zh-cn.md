@@ -20,6 +20,8 @@
 ![Screenshot of redroid 11](./assets/redroid17.png)
 
 目前支持:
+- Android 17 
+- Android 17 64bit only
 - Android 16 (`redroid/redroid:16.0.0-latest`)
 - Android 16 64bit only (`redroid/redroid:16.0.0_64only-latest`)
 - Android 15 (`redroid/redroid:15.0.0-latest`)
