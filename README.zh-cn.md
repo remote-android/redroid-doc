@@ -17,10 +17,10 @@
 实例 (`Docker`, `podman`, `k8s` etc.). *redroid* 支持 `arm64` 和 `amd64` 架构. 
 *redroid* 适用于云游戏, 虚拟手机, 自动测试以及更多场景.
 
-![Screenshot of redroid 11](./assets/redroid17.png)
+![Screenshot of redroid 17](./assets/redroid17.png)
 
 目前支持:
-- Android 17 
+- Android 17
 - Android 17 64bit only
 - Android 16 (`redroid/redroid:16.0.0-latest`)
 - Android 16 64bit only (`redroid/redroid:16.0.0_64only-latest`)
@@ -49,6 +49,7 @@
 ## install required kernel modules
 apt install linux-modules-extra-`uname -r`
 modprobe binder_linux devices="binder,hwbinder,vndbinder"
+# ashmem's deprecated since android 17
 modprobe ashmem_linux
 
 

@@ -17,10 +17,10 @@ English | [简体中文](README.zh-cn.md)
 instances in Linux host (`Docker`, `podman`, `k8s` etc.). *redroid* supports both `arm64` and `amd64` architectures. 
 *redroid* is suitable for Cloud Gaming, Virtualize Phones, Automation Test and more.
 
-![Screenshot of redroid 11](./assets/redroid17.png)
+![Screenshot of redroid 17](./assets/redroid17.png)
 
 Currently supported:
-- Android 17 
+- Android 17
 - Android 17 64bit only
 - Android 16 (`redroid/redroid:16.0.0-latest`)
 - Android 16 64bit only (`redroid/redroid:16.0.0_64only-latest`)
