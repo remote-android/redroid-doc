@@ -183,6 +183,7 @@ Check [android-builder-docker](../android-builder-docker) for details.
 
 ## Contact Me
 - ziyang.zhou@outlook.com
+- 3590361911@qq.com
 
 ## License
 *redroid* itself is under [Apache License](https://www.apache.org/licenses/LICENSE-2.0), since *redroid* includes 

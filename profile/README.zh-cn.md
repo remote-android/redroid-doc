@@ -187,6 +187,7 @@ docker run -itd --rm --privileged \
 
 ## 联系我
 - ziyang.zhou@outlook.com
+- 3590361911@qq.com
 
 ## 许可
 *redroid* 自身基于 [Apache License](https://www.apache.org/licenses/LICENSE-2.0), 自从 *redroid* 包含了 
