@@ -17,7 +17,7 @@
 实例 (`Docker`, `podman`, `k8s` etc.). *redroid* 支持 `arm64` 和 `amd64` 架构. 
 *redroid* 适用于云游戏, 虚拟手机, 自动测试以及更多场景.
 
-![Screenshot of redroid 17](./assets/redroid17.png)
+![Screenshot of redroid 17](../assets/redroid17.png)
 
 目前支持:
 - Android 17
@@ -41,7 +41,7 @@
 ## 开始
 *redroid* 应该可以运行在任何Linux发行版上 (启用一些特点的内核功能).
 
-在 *Ubuntu 20.04* 快速开始; 查看 [deploy section](deploy/README.md) 以获得其他发行版的有关内容.
+在 *Ubuntu 20.04* 快速开始; 查看 [deploy section](../deploy/README.md) 以获得其他发行版的有关内容.
 
 ```bash
 ## install docker https://docs.docker.com/engine/install/#server
@@ -169,7 +169,7 @@ docker run -itd --rm --privileged \
 ## 如何构建
 与 AOSP 构建流程相同, 但是我建议使用 `docker` 构建它.
 
-检查 [android-builder-docker](./android-builder-docker)了解详情.
+检查 [android-builder-docker](../android-builder-docker)了解详情.
 
 ## 解决故障
 - 如何收集调试数据
