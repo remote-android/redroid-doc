@@ -1,51 +1,52 @@
 # Build redroid with docker
-
+### 1. Fetch Code
 ```bash
-#####################
-# fetch code
-#####################
 mkdir ~/redroid && cd ~/redroid
 
 # check supported branch in https://github.com/remote-android/redroid-patches.git
-repo init -u https://android.googlesource.com/platform/manifest --git-lfs --depth=1 -b android-11.0.0_r48
+repo init -u https://android.googlesource.com/platform/manifest --git-lfs --depth=1 -b android17-release
 
 # add local manifests
-git clone https://github.com/remote-android/local_manifests.git ~/redroid/.repo/local_manifests -b 11.0.0
+git clone https://github.com/Nredroid/local_manifests.git ~/redroid/.repo/local_manifests -b 17.0.0
 
 # sync code
 repo sync -c
 
 # apply redroid patches
-git clone https://github.com/remote-android/redroid-patches.git ~/redroid-patches
-~/redroid-patches/apply-patch.sh ~/redroid
+git clone https://github.com/Nredroid/redroid-patches.git ~/redroid-patches
+~/redroid-patches/apply-patch.py ~/redroid
+```
+<details>
+<summary title="Another way to fetch with legacy code.">Alternative solution</summary>
 
-#####################
-# fetch code (LEGACY)
-#####################
+### 1. Fetch code (LEGACY)
+```bash
 mkdir ~/redroid && cd ~/redroid
 
 repo init -u https://github.com/remote-android/platform_manifests.git -b redroid-11.0.0 --depth=1 --git-lfs
 # check @remote-android/platform_manifests for supported branch / manifest
 
 repo sync -c
+```
+</details>
 
-#####################
-# create builder
-#####################
+### 2. Create builder
+```bash
 docker build --build-arg userid=$(id -u) --build-arg groupid=$(id -g) --build-arg username=$(id -un) -t redroid-builder .
+```
 
-#####################
-# start builder
-#####################
+### 3.Start builder
+```bash
 docker run -it --rm --hostname redroid-builder --name redroid-builder -v ~/redroid:/src redroid-builder
-
-#####################
-# build redroid
-#####################
+```
+### 4. Build Redroid
+```bash
 cd /src
 
 . build/envsetup.sh
-
+# For Android 17 +
+lunch redroid_x86_64-aosp_current-eng
+# For Older Android version
 lunch redroid_x86_64-userdebug
 # redroid_arm64-userdebug
 # redroid_x86_64_only-userdebug (64 bit only, redroid 12+)
@@ -53,7 +54,9 @@ lunch redroid_x86_64-userdebug
 
 # start to build
 m
-
+```
+### 5. Create redroid image
+```bash
 #####################
 # create redroid image in *HOST*
 #####################
@@ -61,6 +64,9 @@ cd ~/redroid/out/target/product/redroid_x86_64
 
 sudo mount system.img system -o ro
 sudo mount vendor.img vendor -o ro
+#For Android 17+
+sudo tar --xattrs -c vendor ramdisk -C system --exclude="./vendor" . | docker import -c 'ENTRYPOINT ["/ramdisk/init", "androidboot.hardware=redroid"]' - redroid
+#For Older Android
 sudo tar --xattrs -c vendor -C system --exclude="./vendor" . | docker import -c 'ENTRYPOINT ["/init", "androidboot.hardware=redroid"]' - redroid
 sudo umount system vendor
 

@@ -1,7 +1,7 @@
 # Build Redroid with Docker
-```
-WARNING: YOU NEED ~200GB OF FREE SPACE ON HDD TO COMPLETE THE WHOLE PROCESS (~250GB IF BUILDING WITH GAPPS)
-```
+> [!WARNING]
+> YOU NEED ~200GB OF FREE SPACE ON HDD TO COMPLETE THE WHOLE PROCESS (~250GB IF BUILDING WITH GAPPS)
+
 #### 1) Setup
 ```
 # update and install packages
@@ -44,7 +44,7 @@ git clone https://github.com/remote-android/local_manifests.git ~/redroid/.repo/
 repo sync -c -j$(nproc)
 
 # get latest Dockerfile from Redroid repository
-wget https://raw.githubusercontent.com/remote-android/redroid-doc/master/android-builder-docker/Dockerfile
+wget https://raw.githubusercontent.com/Nredroid/redroid-doc/master/android-builder-docker/Dockerfile
 
 # check if 'Webview.apk' files were properly synced by 'git-lfs'. Each .apk should be at least ~80MB in size.
 find ~/redroid/external/chromium-webview -type f -name "*.apk" -exec du -h {} +
@@ -102,8 +102,8 @@ find ~/redroid/external/chromium-webview -type f -name "*.apk" -exec du -h {} +
 #### 4) Apply Redroid patches, create builder and start it
 ```
 # apply redroid patches
-git clone https://github.com/remote-android/redroid-patches.git ~/redroid-patches
-~/redroid-patches/apply-patch.sh ~/redroid
+git clone https://github.com/Nredroid/redroid-patches.git ~/redroid-patches
+~/redroid-patches/apply-patch.py ~/redroid
 
 docker buildx create --use
 docker buildx build --build-arg userid=$(id -u) --build-arg groupid=$(id -g) --build-arg username=$(id -un) -t redroid-builder --load .
