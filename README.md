@@ -177,6 +177,9 @@ Check [android-builder-docker](./android-builder-docker) for details.
 - Container disappeared immediately
 > make sure the required kernel modules are installed; run `dmesg -T` for detailed logs
 
+- Container exits immediately, stays on a black `FallbackHome` screen (14), or has no video encoders, on hosts like OrbStack or Alpine, or other kernels without PSI / `CONFIG_COMPAT` / DMA-BUF heaps
+> see [nokernel](./nokernel/README.md) for userspace workarounds (binder is still required)
+
 - Container running, but adb cannot connect (device offline etc.)
 > run `docker exec -it <container> sh`, then check `ps -A` and `logcat`
 >
