@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       libcurl4-openssl-dev libfmt-dev libgbm-dev libgflags-dev \
       libgoogle-glog-dev libgtest-dev libjsoncpp-dev liblzma-dev libopus-dev \
       libprotobuf-c-dev libprotobuf-dev libsrtp2-dev libssl-dev \
-      libwayland-dev libxml2-dev libz3-dev uuid-dev \
+      libwayland-dev libxml2-dev libz3-dev uuid-dev openjdk-17-jdk-headless \
     && rm -rf /var/lib/apt/lists/*
 RUN arch="$(dpkg --print-architecture)" \
     && wget -q -O /tmp/bazelisk.deb \
@@ -49,6 +49,7 @@ COPY --from=artifacts /bin/redroid_webrtc /bin/operator /usr/bin/
 COPY --from=artifacts /html_client /usr/share/redroid-webrtc/html_client
 COPY --from=artifacts /operator /usr/share/redroid-webrtc/operator
 COPY --from=artifacts /scrcpy-server /usr/share/redroid-webrtc/scrcpy-server
+COPY --from=artifacts /mic-injector.dex /usr/share/redroid-webrtc/mic-injector.dex
 COPY docker/entrypoint.sh /usr/bin/redroid-webrtc-entrypoint
 EXPOSE 8443/tcp 8080/tcp 15550-15599/udp
 ENTRYPOINT ["/usr/bin/tini", "--", "/usr/bin/redroid-webrtc-entrypoint"]

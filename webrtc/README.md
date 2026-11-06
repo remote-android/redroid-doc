@@ -167,12 +167,26 @@ adb port (5555) either.
 | Keyboard (click the screen first, US layout key codes, modifiers) | ✅ |
 | Power, back, home, overview (menu), volume buttons | ✅ |
 | Device audio (Android 11+) | ✅ |
+| Microphone (hold the mic button, HTTPS only, no image change, see below) | ✅ |
 | adb console in the browser (Cuttlefish's adb.js over a data channel) | ✅ |
 | Multiple devices, device list page | ✅ |
 | Automatic discovery of labelled Docker containers | ✅ |
 | Auto reconnect after device restarts | ✅ |
 | Device rotation (stream and touch follow the device orientation) | ✅ |
-| Rotate button of the web UI, camera, microphone, sensors, location, bluetooth | ❌ (not implemented) |
+| Camera, sensors, location, bluetooth | ❌ (not implemented) |
+
+### Microphone
+
+Hold down the mic button on the device page (it is push-to-talk) and allow the
+browser to use the
+microphone. Browsers only offer it to secure pages, so use
+`https://<host>:8443/` rather than the plain HTTP port.
+
+Apps then hear your microphone on their normal sources (mic, voice
+communication, voice recognition, camcorder, unprocessed). While audio arrives,
+the streamer runs a small helper (`mic-helper/`) on the device through adb, and
+it stops 5 seconds after the audio does. With several clients, their
+microphones are mixed. Set `--mic_helper=` in `STREAMER_ARGS` to turn this off.
 
 ### Tested with
 

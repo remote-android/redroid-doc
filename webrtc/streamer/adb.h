@@ -53,6 +53,10 @@ class Adb {
   // Starts `adb -s <serial> <args...>` in the background, stdout/stderr go to
   // this process' stderr. Returns the pid, or -1.
   pid_t Spawn(const std::vector<std::string>& args) const;
+  // Same, with a pipe to its stdin, returned in *stdin_fd. Returns the pid, or
+  // -1.
+  pid_t SpawnWithStdin(const std::vector<std::string>& args,
+                       int* stdin_fd) const;
 
  private:
   std::vector<std::string> Command(const std::vector<std::string>& args) const;

@@ -128,6 +128,7 @@ start_streamer() {
         --operator_path="'"$RUN_DIR"'/operator" \
         --client_dir="'"$SHARE"'/html_client" \
         --scrcpy_server="'"$SHARE"'/scrcpy-server" --scrcpy_port="$port" \
+        --mic_helper="'"$SHARE"'/mic-injector.dex" \
         --udp_port_min="'"$UDP_PORT_MIN"'" --udp_port_max="'"$UDP_PORT_MAX"'" \
         "$@" > >(sed -u "s/^/[$name] /") 2>&1 &
       child=$!

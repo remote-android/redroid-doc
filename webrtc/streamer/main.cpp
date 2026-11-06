@@ -49,6 +49,7 @@
 #include "cuttlefish/host/frontend/redroid_webrtc/h264_passthrough.h"
 #include "cuttlefish/host/frontend/redroid_webrtc/hwc_frame_source.h"
 #include "cuttlefish/host/frontend/redroid_webrtc/logging_connection_observer.h"
+#include "cuttlefish/host/frontend/redroid_webrtc/mic_injector.h"
 #include "cuttlefish/host/frontend/redroid_webrtc/redroid_connection_observer.h"
 #include "cuttlefish/host/frontend/redroid_webrtc/scrcpy_protocol.h"
 #include "cuttlefish/host/frontend/redroid_webrtc/scrcpy_session.h"
@@ -82,6 +83,9 @@ DEFINE_int32(scrcpy_port, 27183,
              "Local port used to forward the scrcpy sockets.");
 DEFINE_int32(video_bit_rate, 8000000, "Bit rate of the device H.264 encoder.");
 DEFINE_bool(audio, true, "Stream device audio (Android 11+).");
+DEFINE_string(mic_helper, "/usr/share/redroid-webrtc/mic-injector.dex",
+              "Dex of the device microphone helper, empty to disable the "
+              "microphone.");
 DEFINE_bool(raise_capture_volume, true,
             "Set the media volume of the captured output to the maximum the "
             "first time a device is streamed (Android's default of 5/15 "
@@ -652,6 +656,12 @@ int RunScrcpy() {
     audio = std::make_unique<PcmChunker>(
         setup->streamer->AddAudioStream(kAudioLabel));
   }
+  std::unique_ptr<MicInjector> mic;
+  if (!FLAGS_mic_helper.empty()) {
+    mic = std::make_unique<MicInjector>(adb, FLAGS_mic_helper,
+                                        setup->streamer->GetAudioSource());
+    mic->Start();
+  }
   setup->streamer->SetHardwareSpec("Device", device_name);
   setup->streamer->SetHardwareSpec("adb", FLAGS_adb_serial);
   FrameRepeater repeater(display, /*repeat=*/!FLAGS_video_passthrough);
@@ -755,6 +765,7 @@ int RunScrcpy() {
   if (rotation_poller.joinable()) {
     rotation_poller.join();
   }
+  mic.reset();
   setup->streamer->Unregister();
   return 0;
 }

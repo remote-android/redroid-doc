@@ -138,6 +138,20 @@ cf_cc_library(
     include_cleaner_enabled = False,
 )
 
+cf_cc_library(
+    name = "mic_injector",
+    srcs = ["mic_injector.cpp"],
+    hdrs = ["mic_injector.h"],
+    deps = [
+        ":adb",
+        "//cuttlefish/host/frontend/webrtc/libcommon:audio_source",
+        "@abseil-cpp//absl/log",
+    ],
+    clang_tidy_enabled = False,
+    depend_on_what_you_use_enabled = False,
+    include_cleaner_enabled = False,
+)
+
 cf_cc_binary(
     name = "redroid_webrtc",
     srcs = ["main.cpp"],
@@ -150,6 +164,7 @@ cf_cc_binary(
         ":h264_passthrough",
         ":hwc_frame_source",
         ":logging_connection_observer",
+        ":mic_injector",
         ":redroid_connection_observer",
         ":scrcpy_protocol",
         ":scrcpy_session",
@@ -177,6 +192,15 @@ cf_cc_test(
     name = "scrcpy_protocol_test",
     srcs = ["scrcpy_protocol_test.cpp"],
     deps = [":scrcpy_protocol"],
+    clang_tidy_enabled = False,
+    depend_on_what_you_use_enabled = False,
+    include_cleaner_enabled = False,
+)
+
+cf_cc_test(
+    name = "mic_injector_test",
+    srcs = ["mic_injector_test.cpp"],
+    deps = [":mic_injector"],
     clang_tidy_enabled = False,
     depend_on_what_you_use_enabled = False,
     include_cleaner_enabled = False,

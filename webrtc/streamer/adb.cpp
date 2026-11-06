@@ -133,6 +133,34 @@ pid_t Adb::Spawn(const std::vector<std::string>& args) const {
   return SpawnCommand(Command(args));
 }
 
+pid_t Adb::SpawnWithStdin(const std::vector<std::string>& args,
+                          int* stdin_fd) const {
+  int fds[2];
+  if (pipe2(fds, O_CLOEXEC) != 0) {
+    return -1;
+  }
+  pid_t pid = fork();
+  if (pid < 0) {
+    close(fds[0]);
+    close(fds[1]);
+    return -1;
+  }
+  if (pid == 0) {
+    dup2(fds[0], STDIN_FILENO);
+    std::vector<std::string> cmd = Command(args);
+    std::vector<char*> argv;
+    for (auto& arg : cmd) {
+      argv.push_back(arg.data());
+    }
+    argv.push_back(nullptr);
+    execvp(argv[0], argv.data());
+    _exit(127);
+  }
+  close(fds[0]);
+  *stdin_fd = fds[1];
+  return pid;
+}
+
 bool Adb::Connect(std::chrono::seconds timeout) const {
   if (serial_.find(':') == std::string::npos) {
     return true;  // USB / emulator serial, nothing to connect.
