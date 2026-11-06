@@ -12,6 +12,7 @@
 # service and appending it to REDROID_DEVICES.
 
 x-redroid: &redroid
+  # For a webcam in Android, build camera-hal/ and use that image here.
   image: redroid/redroid:14.0.0_64only-latest
   privileged: true
   restart: unless-stopped

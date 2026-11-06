@@ -115,7 +115,8 @@ start_streamer() {
   next_scrcpy_port=$((next_scrcpy_port + 1))
   local source_args=()
   if [ -d "$IPC_DIR/$name" ]; then
-    source_args=(--source=hwc --hwc_socket="$IPC_DIR/$name/hwcomposer.sock")
+    source_args=(--source=hwc --hwc_socket="$IPC_DIR/$name/hwcomposer.sock"
+                 --camera_socket="$IPC_DIR/$name/camera.sock")
     echo "Device $name -> $serial (raw frames from $IPC_DIR/$name)"
   else
     echo "Device $name -> $serial (scrcpy H.264)"

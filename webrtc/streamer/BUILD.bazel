@@ -139,6 +139,19 @@ cf_cc_library(
 )
 
 cf_cc_library(
+    name = "camera_server",
+    srcs = ["camera_server.cpp"],
+    hdrs = ["camera_server.h"],
+    deps = [
+        "@abseil-cpp//absl/log",
+        "@libwebrtc",
+    ],
+    clang_tidy_enabled = False,
+    depend_on_what_you_use_enabled = False,
+    include_cleaner_enabled = False,
+)
+
+cf_cc_library(
     name = "mic_injector",
     srcs = ["mic_injector.cpp"],
     hdrs = ["mic_injector.h"],
@@ -160,6 +173,7 @@ cf_cc_binary(
     ],
     deps = [
         ":adb",
+        ":camera_server",
         ":h264_decoder",
         ":h264_passthrough",
         ":hwc_frame_source",

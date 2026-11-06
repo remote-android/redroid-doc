@@ -45,6 +45,7 @@
 #include "drm/drm_fourcc.h"
 
 #include "cuttlefish/host/frontend/redroid_webrtc/adb.h"
+#include "cuttlefish/host/frontend/redroid_webrtc/camera_server.h"
 #include "cuttlefish/host/frontend/redroid_webrtc/h264_decoder.h"
 #include "cuttlefish/host/frontend/redroid_webrtc/h264_passthrough.h"
 #include "cuttlefish/host/frontend/redroid_webrtc/hwc_frame_source.h"
@@ -86,6 +87,9 @@ DEFINE_bool(audio, true, "Stream device audio (Android 11+).");
 DEFINE_string(mic_helper, "/usr/share/redroid-webrtc/mic-injector.dex",
               "Dex of the device microphone helper, empty to disable the "
               "microphone.");
+DEFINE_string(camera_socket, "",
+              "Unix socket for the camera HAL in the device's /ipc, empty to "
+              "disable the webcam. Needs an image with camera-hal/.");
 DEFINE_bool(raise_capture_volume, true,
             "Set the media volume of the captured output to the maximum the "
             "first time a device is streamed (Android's default of 5/15 "
@@ -662,6 +666,20 @@ int RunScrcpy() {
                                         setup->streamer->GetAudioSource());
     mic->Start();
   }
+  std::unique_ptr<CameraServer> camera;
+  auto features = adb.Shell("pm list features");
+  if (!FLAGS_camera_socket.empty() && features &&
+      features->find("android.hardware.camera.any") != std::string::npos) {
+    camera = std::make_unique<CameraServer>(FLAGS_camera_socket);
+    if (camera->Start()) {
+      setup->streamer->SetCameraSink(camera.get());
+      // Makes the web UI show its camera button.
+      setup->streamer->SetHardwareSpec("camera_passthrough",
+                                       std::string("true"));
+    } else {
+      camera.reset();
+    }
+  }
   setup->streamer->SetHardwareSpec("Device", device_name);
   setup->streamer->SetHardwareSpec("adb", FLAGS_adb_serial);
   FrameRepeater repeater(display, /*repeat=*/!FLAGS_video_passthrough);
@@ -767,6 +785,7 @@ int RunScrcpy() {
   }
   mic.reset();
   setup->streamer->Unregister();
+  setup->streamer->SetCameraSink(nullptr);
   return 0;
 }
 

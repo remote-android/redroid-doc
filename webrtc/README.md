@@ -167,17 +167,19 @@ adb port (5555) either.
 | Keyboard (click the screen first, US layout key codes, modifiers) | ✅ |
 | Power, back, home, overview (menu), volume buttons | ✅ |
 | Device audio (Android 11+) | ✅ |
-| Microphone (hold the mic button, HTTPS only, no image change, see below) | ✅ |
+| Microphone (mic button, HTTPS only, no image change, see below) | ✅ |
 | adb console in the browser (Cuttlefish's adb.js over a data channel) | ✅ |
 | Multiple devices, device list page | ✅ |
 | Automatic discovery of labelled Docker containers | ✅ |
 | Auto reconnect after device restarts | ✅ |
 | Device rotation (stream and touch follow the device orientation) | ✅ |
-| Camera, sensors, location, bluetooth | ❌ (not implemented) |
+| Webcam (optional image layer, Android 14, see [camera-hal](camera-hal/README.md)) | ✅ |
+| Sensors, location, bluetooth | ❌ (not implemented) |
 
 ### Microphone
 
-Hold down the mic button on the device page (it is push-to-talk) and allow the
+Click the mic button on the device page to turn it on (click again to turn it
+off) and allow the
 browser to use the
 microphone. Browsers only offer it to secure pages, so use
 `https://<host>:8443/` rather than the plain HTTP port.

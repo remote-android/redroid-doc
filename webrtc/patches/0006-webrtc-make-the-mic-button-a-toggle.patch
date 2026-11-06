@@ -1,0 +1,27 @@
+diff --git a/base/cvd/cuttlefish/host/frontend/webrtc/html_client/js/app.js b/base/cvd/cuttlefish/host/frontend/webrtc/html_client/js/app.js
+index 5e33d835d..990171e10 100644
+--- a/base/cvd/cuttlefish/host/frontend/webrtc/html_client/js/app.js
++++ b/base/cvd/cuttlefish/host/frontend/webrtc/html_client/js/app.js
+@@ -241,8 +241,8 @@ class DeviceControlApp {
+     addMouseListeners(
+         document.querySelector('#volume_down_btn'),
+         evt => this.#onControlPanelButton(evt, 'volumedown'));
+-    addMouseListeners(
+-        document.querySelector('#mic_btn'), evt => this.#onMicButton(evt));
++    document.querySelector('#mic_btn')
++        .addEventListener('click', evt => this.#onMicButton(evt));
+ 
+     createModalButton(
+         'device-details-button', 'device-details-modal',
+@@ -1197,10 +1197,7 @@ class DeviceControlApp {
+   }
+ 
+   #onMicButton(evt) {
+-    let nextState = evt.type == 'mousedown';
+-    if (this.#micActive == nextState) {
+-      return;
+-    }
++    let nextState = !this.#micActive;
+     this.#micActive = nextState;
+     this.#deviceConnection.useMic(nextState,
+       () => document.querySelector('#mic_btn').innerHTML = 'mic',
