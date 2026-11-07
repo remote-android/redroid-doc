@@ -80,7 +80,10 @@ constexpr int kFormatBlob = 0x21, kFormatImpl = 0x22, kFormatYuv = 0x23;
 constexpr int kJpegMaxSize = 3 * 1024 * 1024;
 constexpr int64_t kFrameNs = 33333333;
 constexpr char kSocket[] = "/ipc/camera.sock";
-const std::vector<std::pair<int, int>> kSizes = {{1280, 720}, {640, 480}, {320, 240}};
+// Includes the sizes the default camcorder profiles ask for: redroid has no
+// media_profiles.xml, so MediaRecorder falls back to QCIF and CIF.
+const std::vector<std::pair<int, int>> kSizes = {{1280, 720}, {640, 480}, {352, 288},
+                                                 {320, 240}, {176, 144}};
 
 ScopedAStatus Err(Status s) { return ScopedAStatus::fromServiceSpecificError(static_cast<int>(s)); }
 
@@ -154,7 +157,8 @@ std::vector<uint8_t> Characteristics() {
        ANDROID_COLOR_CORRECTION_ABERRATION_MODE_OFF);
   m.U8(ANDROID_CONTROL_AE_AVAILABLE_ANTIBANDING_MODES, ANDROID_CONTROL_AE_ANTIBANDING_MODE_AUTO);
   m.U8(ANDROID_CONTROL_AE_AVAILABLE_MODES, ANDROID_CONTROL_AE_MODE_ON);
-  m.I32(ANDROID_CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES, {15, 30, 30, 30});
+  // The default CIF camcorder profile records at 20 fps.
+  m.I32(ANDROID_CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES, {15, 30, 20, 20, 30, 30});
   m.I32(ANDROID_CONTROL_AE_COMPENSATION_RANGE, {0, 0});
   m.Set<camera_metadata_rational_t>(ANDROID_CONTROL_AE_COMPENSATION_STEP, {{1, 1}});
   m.U8(ANDROID_CONTROL_AE_LOCK_AVAILABLE, 0);

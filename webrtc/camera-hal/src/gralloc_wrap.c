@@ -79,7 +79,12 @@ static int wrap_alloc(alloc_device_t* dev, int w, int h, int format, int usage,
     if (result == 0) *stride = w;
     return result;
   }
-  if (format == HAL_PIXEL_FORMAT_YCbCr_420_888) {
+  // Software decoders ask for YV12. Only CPU buffers can be carried this way:
+  // the GPU and the display would read them as RGBA.
+  int cpu_yv12 = format == HAL_PIXEL_FORMAT_YV12 &&
+                 !(usage & (GRALLOC_USAGE_HW_TEXTURE | GRALLOC_USAGE_HW_RENDER |
+                            GRALLOC_USAGE_HW_COMPOSER));
+  if (format == HAL_PIXEL_FORMAT_YCbCr_420_888 || cpu_yv12) {
     int rgba_stride, width = ALIGN(w, 16) / 4;
     // 1.5 rows of 8 bit samples per pixel row, then room for the header. The
     // rows of the RGBA buffer become the rows of the Y plane.

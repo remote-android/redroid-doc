@@ -22,3 +22,12 @@ It builds with the NDK's sysroot and the public AIDL files, without an AOSP tree
 The camera behaves like a phone's in portrait: the scene is cropped to the
 portrait view, and frames are not rotated with the device. Photos are not
 mirrored, unlike the preview.
+
+## Known limits
+
+- Recording uses the default camcorder profile (352x288), because redroid has no
+  `media_profiles.xml`.
+- Software-decoded video can't be shown on screen, with or without this layer:
+  redroid's gralloc doesn't support YUV buffers for the display.
+- On arm64 hosts the build stage needs amd64 emulation, which doesn't survive a
+  reboot: `docker run --rm --privileged tonistiigi/binfmt --install amd64`.

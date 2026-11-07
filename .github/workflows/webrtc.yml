@@ -55,3 +55,45 @@ jobs:
           curl -sf http://127.0.0.1:8080/devices | grep -q '"smoke"'
           curl -sf http://127.0.0.1:8080/devices/smoke/files/client.html | grep -qi '<html'
           curl -sfk https://127.0.0.1:8443/ | grep -q 'redroid devices'
+
+  # Compiles the camera provider and the gralloc wrapper for each architecture
+  # and checks that the image still holds what the device needs. It cannot boot
+  # Android here: there is no binder on the runners.
+  camera:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      # The build stage is always amd64, which arm64 runners have to emulate.
+      - uses: docker/setup-qemu-action@v3
+        with:
+          platforms: amd64
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: webrtc/camera-hal
+          tags: redroid/redroid:camera-ci
+          load: true
+          cache-from: type=gha,scope=camera-${{ matrix.runner }}
+          cache-to: type=gha,mode=max,scope=camera-${{ matrix.runner }}
+
+      - name: Check the installed files
+        run: |
+          docker create --name camera redroid/redroid:camera-ci
+          for f in \
+            vendor/bin/hw/android.hardware.camera.provider-service.redroid \
+            vendor/lib64/hw/gralloc.redroid.so \
+            vendor/lib64/hw/gralloc.redroid-real.so \
+            vendor/etc/init/redroid-camera.rc \
+            vendor/etc/vintf/manifest/redroid-camera.xml \
+            vendor/etc/permissions/android.hardware.camera.xml; do
+            docker cp "camera:/$f" - | tar -tf - > /dev/null
+          done
