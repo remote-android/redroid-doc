@@ -22,6 +22,9 @@
 #   LISTEN_ADDR       operator listen address (default 0.0.0.0)
 #   UDP_PORT_MIN/MAX  UDP port range for WebRTC media (default 15550-15599),
 #                     shared by all streamers
+#   ICE_SERVERS       JSON array of STUN/TURN servers offered to browsers and
+#                     streamers, replacing Google's public STUN server, e.g.
+#                     '[{"urls":["turn:host:3478"],"username":"u","credential":"p"}]'
 #   STREAMER_ARGS     extra flags for every redroid_webrtc process
 #   TLS_CERT_DIR      directory with cert.pem/key.pem (generated if missing)
 #   IPC_DIR           directory with one subdirectory per device holding that
@@ -98,6 +101,24 @@ if [ "$HTTPS_PORT" != "0" ]; then
       -keyout "$TLS_CERT_DIR/key.pem" -out "$TLS_CERT_DIR/cert.pem" 2>/dev/null
   fi
   operator_args+=(--https_port="$HTTPS_PORT" --tls_cert_dir="$TLS_CERT_DIR")
+fi
+if [ -n "${ICE_SERVERS:-}" ]; then
+  # The operator silently falls back to its default on a bad config, so check
+  # it here. Each entry needs "urls" as an array, even for a single URL.
+  if ! jq -e 'type == "array" and all(.[]; (.urls | type) == "array" and
+              (.urls | length) > 0 and all(.urls[]; type == "string"))' \
+      <<< "$ICE_SERVERS" >/dev/null 2>&1; then
+    echo 'ICE_SERVERS must be a JSON array like [{"urls":["stun:host:3478"]}]' >&2
+    exit 1
+  fi
+  (
+    umask 077 # may hold TURN credentials
+    jq -c '{message_type: "config", ice_servers: .}' <<< "$ICE_SERVERS" \
+      > "$RUN_DIR/ice_config.json"
+    printf '#!/bin/sh\nexec cat %q\n' "$RUN_DIR/ice_config.json" > "$RUN_DIR/ice_config"
+    chmod 700 "$RUN_DIR/ice_config"
+  )
+  operator_args+=(--infra_config_delegate="$RUN_DIR/ice_config")
 fi
 (cd "$SHARE/operator" && exec operator "${operator_args[@]}") &
 operator_pid=$!

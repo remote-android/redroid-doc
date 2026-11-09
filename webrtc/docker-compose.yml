@@ -68,6 +68,7 @@ services:
       HTTP_PORT: ${HTTP_PORT:-8080}
       UDP_PORT_MIN: "15550"
       UDP_PORT_MAX: "15599"
+      ICE_SERVERS: ${ICE_SERVERS:-}
     volumes:
       - ./data/webrtc-cert:/var/lib/redroid-webrtc/cert
       - ./data/ipc:/var/lib/redroid-webrtc/ipc

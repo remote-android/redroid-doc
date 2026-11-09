@@ -93,6 +93,7 @@ Environment variables of `redroid-webrtc`:
 | `LISTEN_ADDR` | `0.0.0.0` | Address the web UI listens on |
 | `UDP_PORT_MIN` / `UDP_PORT_MAX` | `15550` / `15599` | UDP ports for WebRTC media, shared by all devices |
 | `TLS_CERT_DIR` | `/var/lib/redroid-webrtc/cert` | `cert.pem` and `key.pem`. A self-signed pair is generated if missing. |
+| `ICE_SERVERS` | Google STUN | JSON array of STUN/TURN servers, see [Remote access and NAT](#remote-access-and-nat) |
 | `STREAMER_ARGS` | | Extra `redroid_webrtc` flags for every device, e.g. `--video_bit_rate=4000000 --fps=60 --audio=false` |
 
 ### Screen sources
@@ -134,10 +135,22 @@ namespace, because the operator reaches each streamer on `127.0.0.1`.
 
 ### Remote access and NAT
 
-On a LAN, the published UDP range is enough. Across NATs or firewalls, run a
-TURN server (for example coturn) and point the operator at it with
-`--infra_config_delegate`. That's a script that prints the ICE server
-configuration, see Cuttlefish's operator.
+On a LAN, the published UDP range is enough. By default, Google's public STUN
+server is offered as well. Across NATs or firewalls, or where that server is
+blocked, run your own STUN/TURN server (for example coturn) and set
+`ICE_SERVERS` to a JSON array in WebRTC's `iceServers` format, with `urls`
+always an array:
+
+```bash
+export ICE_SERVERS='[{"urls":["stun:turn.example.com:3478"]},
+  {"urls":["turn:turn.example.com:3478?transport=udp","turns:turn.example.com:443?transport=tcp"],
+   "username":"redroid","credential":"secret"}]'
+docker compose up -d
+```
+
+Browsers fetch this list from the web UI, so anyone who can open the web UI can
+read the TURN credentials. Streamers still try Google's STUN server too; if it
+is blocked, that attempt just fails without affecting the other servers.
 
 ## Security
 
