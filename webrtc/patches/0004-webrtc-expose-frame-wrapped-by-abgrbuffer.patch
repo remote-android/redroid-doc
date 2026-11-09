@@ -1,0 +1,31 @@
+From deb6d3960f4cbee6c486d7481a07fecdd4650125 Mon Sep 17 00:00:00 2001
+From: redroid-webrtc <noreply@redroid.invalid>
+Date: Tue, 27 Oct 2026 00:45:24 +0100
+Subject: [PATCH] webrtc: expose the frame wrapped by AbgrBuffer
+
+Encoders that consume native buffers (supports_native_handle) can only
+reach the pixel data and format through AbgrBuffer. Expose the wrapped
+cuttlefish::VideoFrameBuffer so they can use buffer types of their own,
+e.g. already encoded frames.
+---
+ .../cuttlefish/host/frontend/webrtc/libcommon/abgr_buffer.h   | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/base/cvd/cuttlefish/host/frontend/webrtc/libcommon/abgr_buffer.h b/base/cvd/cuttlefish/host/frontend/webrtc/libcommon/abgr_buffer.h
+index a792f1452..eec6686b4 100644
+--- a/base/cvd/cuttlefish/host/frontend/webrtc/libcommon/abgr_buffer.h
++++ b/base/cvd/cuttlefish/host/frontend/webrtc/libcommon/abgr_buffer.h
+@@ -37,6 +37,10 @@ class AbgrBuffer : public webrtc::VideoFrameBuffer {
+   const uint8_t* Data() const;
+   int Stride() const;
+   uint32_t PixelFormat() const { return buffer_->PixelFormat(); }
++  // The wrapped frame, for encoders consuming native buffers.
++  const std::shared_ptr<cuttlefish::VideoFrameBuffer>& buffer() const {
++    return buffer_;
++  }
+ 
+  private:
+   std::shared_ptr<cuttlefish::VideoFrameBuffer> buffer_;
+-- 
+2.43.0
+

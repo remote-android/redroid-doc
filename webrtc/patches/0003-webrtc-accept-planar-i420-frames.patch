@@ -1,0 +1,53 @@
+From 8d5152b773c8d58e719f9ce55b1b04454afbdaf1 Mon Sep 17 00:00:00 2001
+From: redroid-webrtc <noreply@redroid.invalid>
+Date: Tue, 27 Oct 2026 00:24:08 +0100
+Subject: [PATCH] webrtc: accept planar I420 frames in AbgrBuffer
+
+Video sources that already produce I420 (e.g. a hardware or software
+video decoder) had to convert to ABGR so that AbgrBuffer::ToI420()
+could convert back. Accept DRM_FORMAT_YUV420 buffers (contiguous Y, U,
+V planes) and wrap them without copying.
+---
+ .../frontend/webrtc/libcommon/abgr_buffer.cpp    | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/base/cvd/cuttlefish/host/frontend/webrtc/libcommon/abgr_buffer.cpp b/base/cvd/cuttlefish/host/frontend/webrtc/libcommon/abgr_buffer.cpp
+index f6841a69f..2680531af 100644
+--- a/base/cvd/cuttlefish/host/frontend/webrtc/libcommon/abgr_buffer.cpp
++++ b/base/cvd/cuttlefish/host/frontend/webrtc/libcommon/abgr_buffer.cpp
+@@ -17,6 +17,7 @@
+ #include "cuttlefish/host/frontend/webrtc/libcommon/abgr_buffer.h"
+ 
+ #include <api/video/i420_buffer.h>
++#include <common_video/include/video_frame_buffer.h>
+ #include <drm/drm_fourcc.h>
+ #include <libyuv.h>
+ 
+@@ -34,11 +35,22 @@ const uint8_t* AbgrBuffer::Data() const { return buffer_->Data(); }
+ int AbgrBuffer::Stride() const { return buffer_->Stride(); }
+ 
+ rtc::scoped_refptr<webrtc::I420BufferInterface> AbgrBuffer::ToI420() {
++  uint32_t format = buffer_->PixelFormat();
++  if (format == DRM_FORMAT_YUV420) {
++    // Planar I420 stored contiguously (Y, then U, then V; chroma planes have
++    // half the stride), e.g. frames from a video decoder: wrap it, no copy.
++    const uint8_t* y = buffer_->Data();
++    int y_stride = buffer_->Stride();
++    int uv_stride = (y_stride + 1) / 2;
++    const uint8_t* u = y + y_stride * height();
++    const uint8_t* v = u + uv_stride * ((height() + 1) / 2);
++    return webrtc::WrapI420Buffer(width(), height(), y, y_stride, u, uv_stride,
++                                  v, uv_stride, [buffer = buffer_] {});
++  }
++
+   rtc::scoped_refptr<webrtc::I420Buffer> i420_buffer =
+       webrtc::I420Buffer::Create(width(), height());
+ 
+-  uint32_t format = buffer_->PixelFormat();
+-
+   int res = -1;
+   if (format == DRM_FORMAT_ARGB8888 || format == DRM_FORMAT_XRGB8888) {
+     res = libyuv::ARGBToI420(
+-- 
+2.43.0
+

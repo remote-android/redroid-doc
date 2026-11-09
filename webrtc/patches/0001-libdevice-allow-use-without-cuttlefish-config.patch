@@ -1,0 +1,66 @@
+From 22ca8193e9360f86f2e9de1253e5371f53547db5 Mon Sep 17 00:00:00 2001
+From: redroid-webrtc <noreply@redroid.invalid>
+Date: Mon, 26 Oct 2026 22:57:26 +0100
+Subject: [PATCH] libdevice: allow use without a CuttlefishConfig
+
+RecordingManager and the keyboard data channel handler required a
+cuttlefish_config.json, which only exists for launcher-managed devices.
+Fall back to defaults so other devices (e.g. redroid containers) can
+reuse the streamer library.
+---
+ .../host/frontend/webrtc/libdevice/data_channels.cpp  | 11 +++++++----
+ .../frontend/webrtc/libdevice/recording_manager.cpp   | 11 +++++++++--
+ 2 files changed, 16 insertions(+), 6 deletions(-)
+
+diff --git a/base/cvd/cuttlefish/host/frontend/webrtc/libdevice/data_channels.cpp b/base/cvd/cuttlefish/host/frontend/webrtc/libdevice/data_channels.cpp
+index 5fb0c35b7..b4c7baec1 100644
+--- a/base/cvd/cuttlefish/host/frontend/webrtc/libdevice/data_channels.cpp
++++ b/base/cvd/cuttlefish/host/frontend/webrtc/libdevice/data_channels.cpp
+@@ -157,10 +157,13 @@ class InputChannelHandler : public DataChannelHandler {
+       CF_EXPECT(
+           observer()->OnMultiTouchEvent(label, idArr, xArr, yArr, down, size));
+     } else if (event_type == "keyboard") {
+-      auto cvd_config =
+-          CF_EXPECT(CuttlefishConfig::Get(), "CuttlefishConfig is null!");
+-      auto instance = cvd_config->ForDefaultInstance();
+-      Json::Value domkey_mapping_config_json = instance.domkey_mapping_config();
++      // The custom key mapping is optional: devices not managed by a
++      // cuttlefish launcher have no CuttlefishConfig and use the defaults.
++      Json::Value domkey_mapping_config_json;
++      if (auto cvd_config = CuttlefishConfig::Get()) {
++        domkey_mapping_config_json =
++            cvd_config->ForDefaultInstance().domkey_mapping_config();
++      }
+       bool down = CF_EXPECT(get_str("event_type")) == std::string("keydown");
+       std::string keycode = CF_EXPECT(get_str("keycode"));
+       uint16_t code = DomKeyCodeToLinux(keycode);
+diff --git a/base/cvd/cuttlefish/host/frontend/webrtc/libdevice/recording_manager.cpp b/base/cvd/cuttlefish/host/frontend/webrtc/libdevice/recording_manager.cpp
+index d20932246..060d41b00 100644
+--- a/base/cvd/cuttlefish/host/frontend/webrtc/libdevice/recording_manager.cpp
++++ b/base/cvd/cuttlefish/host/frontend/webrtc/libdevice/recording_manager.cpp
+@@ -28,13 +28,20 @@ namespace cuttlefish {
+ namespace webrtc_streaming {
+ 
+ RecordingManager::RecordingManager() {
++  recording_ = false;
+   auto cvd_config = cuttlefish::CuttlefishConfig::Get();
+-  CHECK(cvd_config);
++  if (!cvd_config) {
++    // Allows the streamer library to be used by devices that are not managed
++    // by a cuttlefish launcher (no cuttlefish_config.json available).
++    LOG(WARNING) << "No CuttlefishConfig, recordings go to /tmp/recording/";
++    instance_name_ = "device";
++    recording_directory_ = "/tmp/recording/";
++    return;
++  }
+   auto instance = cvd_config->ForDefaultInstance();
+ 
+   instance_name_ = instance.instance_name();
+   recording_directory_ = instance.PerInstancePath("recording/");
+-  recording_ = false;
+ }
+ 
+ void RecordingManager::AddSource(
+-- 
+2.43.0
+

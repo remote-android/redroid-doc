@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>redroid devices</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --fg: #1d2330; --muted: #5d6675; --card: #ffffff;
+    --border: #dfe3ea; --accent: #2f6fde; --ok: #1f9d55;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12151b; --fg: #e6e9ef; --muted: #98a1b0; --card: #1b2029;
+      --border: #2c3340; --accent: #6b9cff; --ok: #3ccf7a;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 880px; margin: 0 auto; padding: 32px 16px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  p.sub { color: var(--muted); margin: 0 0 24px; }
+  ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px;
+       grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  li a {
+    display: block; padding: 16px; border-radius: 10px; text-decoration: none;
+    background: var(--card); border: 1px solid var(--border); color: var(--fg);
+  }
+  li a:hover { border-color: var(--accent); }
+  .name { font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+  .meta { color: var(--muted); font-size: 13px; margin-top: 4px; }
+  .empty, .error { color: var(--muted); padding: 24px; text-align: center;
+                   border: 1px dashed var(--border); border-radius: 10px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>redroid devices</h1>
+  <p class="sub">Android containers available for streaming. Select one to open it.</p>
+  <ul id="devices"></ul>
+  <div id="status" class="empty">Loading…</div>
+</main>
+<script>
+  const list = document.getElementById('devices');
+  const status = document.getElementById('status');
+
+  function render(devices) {
+    list.replaceChildren();
+    devices.sort((a, b) => a.device_id.localeCompare(b.device_id));
+    for (const device of devices) {
+      const id = device.device_id;
+      const a = document.createElement('a');
+      a.href = `/devices/${encodeURIComponent(id)}/files/client.html`;
+      const name = document.createElement('div');
+      name.className = 'name';
+      const dot = document.createElement('span');
+      dot.className = 'dot';
+      name.append(dot, id);
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      meta.textContent = device.group_name ? `group ${device.group_name}` : 'online';
+      a.append(name, meta);
+      const li = document.createElement('li');
+      li.append(a);
+      list.append(li);
+    }
+    status.hidden = devices.length > 0;
+    status.className = 'empty';
+    status.textContent = 'No devices registered yet. Streamers register once their redroid container has booted.';
+  }
+
+  async function refresh() {
+    try {
+      const response = await fetch('/devices', {cache: 'no-store'});
+      if (!response.ok) throw new Error(response.status);
+      render(await response.json());
+    } catch (e) {
+      status.hidden = false;
+      status.className = 'error';
+      status.textContent = `Could not load the device list (${e.message}).`;
+    }
+  }
+
+  refresh();
+  setInterval(refresh, 5000);
+</script>
+</body>
+</html>

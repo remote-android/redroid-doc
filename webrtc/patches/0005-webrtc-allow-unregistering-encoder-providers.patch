@@ -1,0 +1,62 @@
+From 4822c9f14b2e3222c95f3ddaf2bc1e1d8c1305f4 Mon Sep 17 00:00:00 2001
+From: redroid-webrtc <noreply@redroid.invalid>
+Date: Tue, 27 Oct 2026 00:49:46 +0100
+Subject: [PATCH] webrtc: allow unregistering encoder providers
+
+Applications whose frames only one encoder can handle (e.g. already
+encoded frames passed through to WebRTC) need to keep the other
+providers from being negotiated. Add EncoderProviderRegistry::Unregister.
+---
+ .../webrtc/libcommon/encoder_provider_registry.cpp    | 11 +++++++++++
+ .../webrtc/libcommon/encoder_provider_registry.h      |  6 ++++++
+ 2 files changed, 17 insertions(+)
+
+diff --git a/base/cvd/cuttlefish/host/frontend/webrtc/libcommon/encoder_provider_registry.cpp b/base/cvd/cuttlefish/host/frontend/webrtc/libcommon/encoder_provider_registry.cpp
+index 22de5bcff..f5edb540e 100644
+--- a/base/cvd/cuttlefish/host/frontend/webrtc/libcommon/encoder_provider_registry.cpp
++++ b/base/cvd/cuttlefish/host/frontend/webrtc/libcommon/encoder_provider_registry.cpp
+@@ -39,6 +39,17 @@ void EncoderProviderRegistry::Register(
+   providers_.push_back(std::move(provider));
+ }
+ 
++void EncoderProviderRegistry::Unregister(const std::string& name) {
++  std::lock_guard<std::mutex> lock(mutex_);
++  auto removed = std::remove_if(
++      providers_.begin(), providers_.end(),
++      [&name](const auto& provider) { return provider->GetName() == name; });
++  if (removed != providers_.end()) {
++    LOG(INFO) << "Unregistering encoder provider: " << name;
++  }
++  providers_.erase(removed, providers_.end());
++}
++
+ std::vector<EncoderProvider*> EncoderProviderRegistry::GetProviders() const {
+   std::vector<EncoderProvider*> result;
+   {
+diff --git a/base/cvd/cuttlefish/host/frontend/webrtc/libcommon/encoder_provider_registry.h b/base/cvd/cuttlefish/host/frontend/webrtc/libcommon/encoder_provider_registry.h
+index 722048091..26ab0df04 100644
+--- a/base/cvd/cuttlefish/host/frontend/webrtc/libcommon/encoder_provider_registry.h
++++ b/base/cvd/cuttlefish/host/frontend/webrtc/libcommon/encoder_provider_registry.h
+@@ -19,6 +19,7 @@
+ #include <algorithm>
+ #include <memory>
+ #include <mutex>
++#include <string>
+ #include <vector>
+ 
+ #include "cuttlefish/host/frontend/webrtc/libcommon/encoder_provider.h"
+@@ -34,6 +35,11 @@ class EncoderProviderRegistry {
+   // Takes ownership. Skips unavailable providers.
+   void Register(std::unique_ptr<EncoderProvider> provider);
+ 
++  // Removes the provider with that name, if registered. Lets an application
++  // restrict the encoders that get negotiated (e.g. when its frames can only
++  // be handled by one provider).
++  void Unregister(const std::string& name);
++
+   // Returns available providers sorted by priority (highest first).
+   std::vector<EncoderProvider*> GetProviders() const;
+ 
+-- 
+2.43.0
+

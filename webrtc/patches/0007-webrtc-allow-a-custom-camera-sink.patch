@@ -1,0 +1,68 @@
+diff --git a/base/cvd/cuttlefish/host/frontend/webrtc/libdevice/streamer.cpp b/base/cvd/cuttlefish/host/frontend/webrtc/libdevice/streamer.cpp
+index e47b637be..d673c9e0c 100644
+--- a/base/cvd/cuttlefish/host/frontend/webrtc/libdevice/streamer.cpp
++++ b/base/cvd/cuttlefish/host/frontend/webrtc/libdevice/streamer.cpp
+@@ -185,6 +185,7 @@ class Streamer::Impl : public ServerConnectionObserver,
+   std::vector<ControlPanelButtonDescriptor> custom_control_panel_buttons_;
+   std::shared_ptr<AudioDeviceModuleWrapper> audio_device_module_;
+   std::unique_ptr<CameraStreamer> camera_streamer_;
++  rtc::VideoSinkInterface<webrtc::VideoFrame>* camera_sink_ = nullptr;
+   int registration_retries_left_ = kRegistrationRetries;
+   int retry_interval_ms_ = kRetryFirstIntervalMs;
+   RecordingManager* recording_manager_ = nullptr;
+@@ -339,6 +340,11 @@ CameraController* Streamer::AddCamera(unsigned int port, unsigned int cid,
+   return impl_->camera_streamer_.get();
+ }
+ 
++void Streamer::SetCameraSink(
++    rtc::VideoSinkInterface<webrtc::VideoFrame>* sink) {
++  impl_->camera_sink_ = sink;
++}
++
+ void Streamer::SetHardwareSpec(std::string key, std::string value) {
+   impl_->hardware_.emplace(key, value);
+ }
+@@ -733,15 +739,16 @@ void Streamer::Impl::DestroyClientHandler(int client_id) {
+ }
+ 
+ void Streamer::Impl::SetupCameraForClient(int client_id) {
+-  if (!camera_streamer_) {
++  rtc::VideoSinkInterface<webrtc::VideoFrame>* sink =
++      camera_sink_ ? camera_sink_ : camera_streamer_.get();
++  if (!sink) {
+     return;
+   }
+   auto client_handler = clients_[client_id];
+   if (client_handler) {
+     auto camera_track = client_handler->GetCameraStream();
+     if (camera_track) {
+-      camera_track->AddOrUpdateSink(camera_streamer_.get(),
+-                                    rtc::VideoSinkWants());
++      camera_track->AddOrUpdateSink(sink, rtc::VideoSinkWants());
+     }
+   }
+ }
+diff --git a/base/cvd/cuttlefish/host/frontend/webrtc/libdevice/streamer.h b/base/cvd/cuttlefish/host/frontend/webrtc/libdevice/streamer.h
+index 72a7aeffc..26ec2fa1d 100644
+--- a/base/cvd/cuttlefish/host/frontend/webrtc/libdevice/streamer.h
++++ b/base/cvd/cuttlefish/host/frontend/webrtc/libdevice/streamer.h
+@@ -23,6 +23,8 @@
+ 
+ #include "cuttlefish/host/libs/config/custom_actions.h"
+ 
++#include "api/video/video_frame.h"
++#include "api/video/video_sink_interface.h"
+ #include "cuttlefish/host/frontend/webrtc/libcommon/audio_source.h"
+ #include "cuttlefish/host/frontend/webrtc/libdevice/audio_sink.h"
+ #include "cuttlefish/host/frontend/webrtc/libdevice/camera_controller.h"
+@@ -88,6 +90,10 @@ class Streamer {
+ 
+   bool AddTouchpad(const std::string& label, int width, int height);
+ 
++  // Sends the clients' cameras to `sink` instead of AddCamera()'s vsock stream.
++  // Set it before clients connect.
++  void SetCameraSink(rtc::VideoSinkInterface<webrtc::VideoFrame>* sink);
++
+   void SetHardwareSpec(std::string key, std::string value);
+ 
+   template <typename V>

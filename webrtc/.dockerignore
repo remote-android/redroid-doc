@@ -1,0 +1,2 @@
+# Only what the image build needs
+bazel-*

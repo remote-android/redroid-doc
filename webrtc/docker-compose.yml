@@ -1,0 +1,101 @@
+# Browser access to redroid containers.
+#
+#   docker compose up -d
+#   open https://<host>:8443/   (self-signed certificate, or http://<host>:8080/)
+#
+# Host requirements (see README.md): binder_linux loaded, and a kernel with
+# CONFIG_DMABUF_HEAPS (/dev/dma_heap present), e.g. stock Ubuntu 22.04/24.04.
+#
+# redroid-webrtc uses the host network: WebRTC advertises the host's own
+# addresses to browsers, and it reaches each redroid container through its
+# fixed IP on the redroid bridge network. Add devices by copying a redroid
+# service and appending it to REDROID_DEVICES.
+
+x-redroid: &redroid
+  # For a webcam in Android, build camera-hal/ and use that image here.
+  image: redroid/redroid:14.0.0_64only-latest
+  privileged: true
+  restart: unless-stopped
+  labels:
+    # Picked up automatically with REDROID_DISCOVERY=docker (see below).
+    redroid.webrtc: "true"
+
+services:
+  redroid1:
+    <<: *redroid
+    volumes:
+      - ./data/redroid1:/data
+      # hwcomposer stream socket, read by redroid-webrtc (raw frames, no
+      # video encoder on the device). Remove it and use_redroid_stream to
+      # stream through scrcpy's H.264 encoder instead.
+      - ./data/ipc/redroid1:/ipc
+    command:
+      - androidboot.use_redroid_stream=1
+      - androidboot.redroid_width=720
+      - androidboot.redroid_height=1280
+      - androidboot.redroid_dpi=320
+      - androidboot.redroid_fps=30
+    networks:
+      redroid:
+        ipv4_address: 172.30.0.11
+
+  # redroid2:
+  #   <<: *redroid
+  #   volumes:
+  #     - ./data/redroid2:/data
+  #     - ./data/ipc/redroid2:/ipc
+  #   command:
+  #     - androidboot.use_redroid_stream=1
+  #   networks:
+  #     redroid:
+  #       ipv4_address: 172.30.0.12
+
+  redroid-webrtc:
+    image: ${REDROID_WEBRTC_IMAGE:-redroid/webrtc:latest}
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    network_mode: host
+    restart: unless-stopped
+    environment:
+      REDROID_DEVICES: "redroid1=172.30.0.11:5555"
+      # REDROID_DEVICES: "redroid1=172.30.0.11:5555,redroid2=172.30.0.12:5555"
+      # Or follow every container labelled redroid.webrtc instead of listing
+      # them (also mount the docker socket below, which grants root on the host):
+      # REDROID_DISCOVERY: "docker"
+      LISTEN_ADDR: ${LISTEN_ADDR:-0.0.0.0}
+      HTTPS_PORT: ${HTTPS_PORT:-8443}
+      HTTP_PORT: ${HTTP_PORT:-8080}
+      UDP_PORT_MIN: "15550"
+      UDP_PORT_MAX: "15599"
+      ICE_SERVERS: ${ICE_SERVERS:-}
+    volumes:
+      - ./data/webrtc-cert:/var/lib/redroid-webrtc/cert
+      - ./data/ipc:/var/lib/redroid-webrtc/ipc
+      # - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - redroid1
+
+  # Optional login in front of the web UI:
+  #   AUTH_PASSWORD_HASH=$(docker run --rm caddy:2.8.4 caddy hash-password -p 'secret') \
+  #   LISTEN_ADDR=127.0.0.1 HTTPS_PORT=0 docker compose --profile auth up -d
+  # then open https://<host>:9443/ (user "admin" unless AUTH_USER is set).
+  auth-proxy:
+    image: caddy:2.8.4
+    profiles: ["auth"]
+    network_mode: host
+    restart: unless-stopped
+    environment:
+      AUTH_USER: ${AUTH_USER:-admin}
+      AUTH_PASSWORD_HASH: ${AUTH_PASSWORD_HASH:-}
+      AUTH_SITE: ${AUTH_SITE:-:9443}
+      WEBUI_PORT: ${HTTP_PORT:-8080}
+    volumes:
+      - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./data/caddy:/data
+
+networks:
+  redroid:
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
