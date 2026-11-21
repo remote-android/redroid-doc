@@ -1,5 +1,9 @@
 # Stock redroid plus a camera fed by a browser's webcam. See README.md.
 #   docker build -t redroid/redroid:14.0.0_64only-camera .
+# Android 16: pass --build-arg REDROID_IMAGE=redroid/redroid:16.0.0_64only-latest
+#   --build-arg CAMERA_METADATA_LIB=/system/lib64/libcamera_metadata.so
+# (the VNDK apex that holds the library on 14 is gone). AOSP_TAG can stay: the
+# AIDL versions used here are frozen and Android 16 still accepts them.
 ARG REDROID_IMAGE=redroid/redroid:14.0.0_64only-latest
 ARG UBUNTU=ubuntu:24.04
 ARG AOSP_TAG=android-14.0.0_r1
@@ -12,6 +16,7 @@ ARG TARGETARCH
 ARG AOSP_TAG
 ARG NDK_SHA256=59c2f6dc96743b5daf5d1626684640b20a6bd2b1d85b13156b90333741bad5cc
 ARG BUILD_TOOLS_SHA256=c57932465d8dbb3f58511c8f576fb15057a3e1b5c92af164b596edd9bcded375
+ARG CAMERA_METADATA_LIB=/system/apex/com.android.vndk.current/lib64/libcamera_metadata.so
 ARG STB_COMMIT=5c205738c191bcb0abc65c4febfa9bd25ff35234
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -44,7 +49,7 @@ RUN A="https://android.googlesource.com/platform" && mkdir -p /src/interfaces /s
        "https://raw.githubusercontent.com/nothings/stb/${STB_COMMIT}/stb_image_write.h" \
     && printf '#pragma once\n#define ANDROID_API __attribute__((visibility("default")))\n' \
        > /src/headers/cutils/compiler.h
-COPY --from=stock /system/apex/com.android.vndk.current/lib64/libcamera_metadata.so /stock/
+COPY --from=stock ${CAMERA_METADATA_LIB} /stock/
 COPY --from=stock /system/lib64/libbinder_ndk.so /stock/
 COPY --from=stock /system/lib64/libnativewindow.so /stock/
 COPY --from=stock /system/lib64/libcutils.so /stock/
