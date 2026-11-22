@@ -186,7 +186,7 @@ adb port (5555) either.
 | Automatic discovery of labelled Docker containers | ✅ |
 | Auto reconnect after device restarts | ✅ |
 | Device rotation (stream and touch follow the device orientation) | ✅ |
-| Webcam (optional image layer, Android 14, see [camera-hal](camera-hal/README.md)) | ✅ |
+| Webcam (optional image layer, Android 14 and 16, see [camera-hal](camera-hal/README.md)) | ✅ |
 | Sensors, location, bluetooth | ❌ (not implemented) |
 
 ### Microphone

@@ -1,11 +1,27 @@
 # Webcam for redroid
 
 Optional layer on top of a stock redroid image: Android gets a front camera fed
-by the webcam of a browser connected to `redroid-webrtc`. Android 14 only.
+by the webcam of a browser connected to `redroid-webrtc`. Tested on Android 14 and 16.
 
 ```bash
 docker build -t redroid/redroid:14.0.0_64only-camera .
 ```
+
+For Android 16:
+
+```bash
+docker build -t redroid/redroid:16.0.0_64only-camera \
+  --build-arg REDROID_IMAGE=redroid/redroid:16.0.0_64only-latest \
+  --build-arg CAMERA_METADATA_LIB=/system/lib64/libcamera_metadata.so .
+```
+
+The host kernel has to run stock redroid 16 first. Android 16 needs ashmem or an
+ashmem-on-memfd shim and the BPF JIT; a kernel without ashmem (Ubuntu 24.04's, for
+example) fails before any camera code runs, with "Failed to create ashmem". On
+such a kernel the out-of-tree ashmem module from
+[redroid-modules](https://github.com/remote-android/redroid-modules) works once it
+is patched for 6.x, and SurfaceFlinger also needs `service.sf.prime_shader_cache`
+set to `false` (the stock 16 image aborts in its shader priming without a GPU).
 
 Use that image for the device, and share its `/ipc` with `redroid-webrtc` (the
 `docker-compose.yml` of `webrtc/` already does). On the device page, turn on the

@@ -58,6 +58,9 @@ COPY build.sh /camera-hal/
 RUN mkdir /out && /camera-hal/build.sh /out "${TARGETARCH}"
 
 FROM stock
+ARG CAMERA_METADATA_LIB=/system/apex/com.android.vndk.current/lib64/libcamera_metadata.so
+# vendor processes cannot see /system/lib64 (Android 16): the stock camera-metadata library goes next to the provider
+COPY --from=stock ${CAMERA_METADATA_LIB} /vendor/lib64/libcamera_metadata.so
 COPY --from=stock /vendor/lib64/hw/gralloc.redroid.so /vendor/lib64/hw/gralloc.redroid-real.so
 COPY --from=build /out/gralloc.redroid.so /vendor/lib64/hw/gralloc.redroid.so
 COPY --from=build /out/camera-provider /vendor/bin/hw/android.hardware.camera.provider-service.redroid
