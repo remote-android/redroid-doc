@@ -1,0 +1,19 @@
+# Authenticating HTTPS front end for the redroid-webrtc web UI (compose
+# profile "auth"). Signaling (WebSocket) goes through it; WebRTC media still
+# flows directly over the UDP port range.
+{
+	# Certificates from Caddy's own local CA (browsers will warn). Use
+	# AUTH_SITE=your.domain.example to get a public certificate instead.
+	local_certs
+	skip_install_trust
+}
+
+{$AUTH_SITE::9443} {
+	tls internal {
+		on_demand
+	}
+	basic_auth {
+		{$AUTH_USER:admin} {$AUTH_PASSWORD_HASH}
+	}
+	reverse_proxy 127.0.0.1:{$WEBUI_PORT:8080}
+}

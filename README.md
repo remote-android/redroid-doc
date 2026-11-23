@@ -75,6 +75,7 @@ adb connect localhost:5555
 scrcpy -s localhost:5555
 ### NOTE: change localhost to IP if running redroid remotely
 ###     typically running scrcpy on your local PC
+### or view it in a web browser, see WebRTC Streaming below
 ```
 
 ## Configuration
@@ -161,7 +162,15 @@ Check [android-builder-docker](./android-builder-docker) for details.
 
 
 ## WebRTC Streaming
-Plan to port `WebRTC` solutions from `cuttlefish`, including frontend (HTML5), backend and many virtual HALs.
+Use redroid from a web browser (screen, touch, keyboard, buttons, audio and an adb console) with the `WebRTC` stack ported from `cuttlefish`. It works with the stock redroid images:
+
+```bash
+cd webrtc
+docker compose up -d
+# open https://<host>:8443/ (or http://<host>:8080/) and pick a device
+```
+
+The host kernel needs `CONFIG_DMABUF_HEAPS` (`/dev/dma_heap`), like any scrcpy-based viewing. Check [webrtc](./webrtc) for requirements, multiple devices, security notes and development.
 
 ## How To Build
 It's the same way as AOSP building process, but I suggest to use `docker` to build it.

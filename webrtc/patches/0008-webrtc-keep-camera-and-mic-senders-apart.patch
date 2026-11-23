@@ -1,0 +1,12 @@
+diff --git a/base/cvd/cuttlefish/host/frontend/webrtc/html_client/js/cf_webrtc.js b/base/cvd/cuttlefish/host/frontend/webrtc/html_client/js/cf_webrtc.js
+--- a/base/cvd/cuttlefish/host/frontend/webrtc/html_client/js/cf_webrtc.js
++++ b/base/cvd/cuttlefish/host/frontend/webrtc/html_client/js/cf_webrtc.js
+@@ -428,7 +428,7 @@
+     }
+     this.#cameraRequested = !!in_use;
+     return this.#useDevice(
+-        in_use, this.#micSenders, {audio: false, video: true},
++        in_use, this.#cameraSenders, {audio: false, video: true},
+         () => this.#cameraRequested,
+         (stream) => this.sendCameraResolution(stream));
+   }

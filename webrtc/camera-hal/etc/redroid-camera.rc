@@ -1,0 +1,7 @@
+service vendor.camera-provider-redroid /vendor/bin/hw/android.hardware.camera.provider-service.redroid
+    class hal
+    user cameraserver
+    group audio camera input drmrpc
+    capabilities SYS_NICE
+    ioprio rt 4
+    interface aidl android.hardware.camera.provider.ICameraProvider/internal/0
