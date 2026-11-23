@@ -14,7 +14,36 @@
 x-redroid: &redroid
   # For a webcam in Android, build camera-hal/ and use that image here.
   image: redroid/redroid:14.0.0_64only-latest
-  privileged: true
+  # Not privileged: only what Android's init needs (found by bisecting from
+  # privileged, see README "Container privileges").
+  cap_drop: [ALL]
+  cap_add:
+    - SYS_ADMIN # init mounts binderfs, cgroups and bpf
+    - NET_ADMIN
+    - NET_RAW
+    - NET_BIND_SERVICE
+    - SYS_PTRACE
+    - SYS_NICE
+    - SYS_RESOURCE
+    - IPC_LOCK
+    - KILL
+    - CHOWN
+    - FOWNER
+    - FSETID
+    - DAC_OVERRIDE
+    - DAC_READ_SEARCH
+    - SETUID
+    - SETGID
+    - SETPCAP
+    - WAKE_ALARM
+    - BLOCK_SUSPEND
+  security_opt:
+    - apparmor=unconfined # Docker's profile blocks the mounts init does
+  devices:
+    - /dev/dma_heap:/dev/dma_heap
+    - /dev/uinput:/dev/uinput
+  device_cgroup_rules:
+    - "c *:* rwm" # binderfs creates its devices at runtime
   restart: unless-stopped
   labels:
     # Picked up automatically with REDROID_DISCOVERY=docker (see below).
@@ -24,6 +53,7 @@ services:
   redroid1:
     <<: *redroid
     volumes:
+      - /sys:/sys:rw # Android's init writes to sysfs
       - ./data/redroid1:/data
       # hwcomposer stream socket, read by redroid-webrtc (raw frames, no
       # video encoder on the device). Remove it and use_redroid_stream to
@@ -42,6 +72,7 @@ services:
   # redroid2:
   #   <<: *redroid
   #   volumes:
+  #     - /sys:/sys:rw
   #     - ./data/redroid2:/data
   #     - ./data/ipc/redroid2:/ipc
   #   command:

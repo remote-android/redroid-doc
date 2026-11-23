@@ -71,9 +71,36 @@ root on the host). Containers are checked every 5 seconds. A streamer starts
 when a labelled container starts, and stops when it goes away.
 
 ```bash
-docker run -itd --privileged --label redroid.webrtc=true \
-  --label redroid.webrtc.name=pixel redroid/redroid:14.0.0_64only-latest
+docker run -itd --cap-drop ALL \
+  --cap-add SYS_ADMIN --cap-add NET_ADMIN --cap-add NET_RAW --cap-add NET_BIND_SERVICE \
+  --cap-add SYS_PTRACE --cap-add SYS_NICE --cap-add SYS_RESOURCE --cap-add IPC_LOCK \
+  --cap-add KILL --cap-add CHOWN --cap-add FOWNER --cap-add FSETID --cap-add DAC_OVERRIDE \
+  --cap-add DAC_READ_SEARCH --cap-add SETUID --cap-add SETGID --cap-add SETPCAP \
+  --cap-add WAKE_ALARM --cap-add BLOCK_SUSPEND \
+  --security-opt apparmor=unconfined -v /sys:/sys:rw \
+  --device /dev/dma_heap --device /dev/uinput --device-cgroup-rule 'c *:* rwm' \
+  --label redroid.webrtc=true --label redroid.webrtc.name=pixel \
+  redroid/redroid:14.0.0_64only-latest
 ```
+
+### Container privileges
+
+The redroid containers do not run with `--privileged`. These settings were
+found by starting from `--privileged` and removing one thing at a time, until
+the device stopped booting (Ubuntu 24.04, Android 14). Android's init mounts
+and configures the system itself, so the container is narrower than
+privileged but not unprivileged: it has no module loading, raw I/O, clock,
+reboot, mknod or audit rights, no other host devices, and keeps Docker's
+default seccomp profile.
+
+| Setting | Why |
+|---|---|
+| `SYS_ADMIN` | init mounts binderfs, cgroups and bpf |
+| `apparmor=unconfined` | Docker's default profile blocks those mounts |
+| `/sys:/sys:rw` | init writes to sysfs |
+| `device-cgroup-rule c *:* rwm` | binderfs creates its devices at runtime |
+| `/dev/dma_heap`, `/dev/uinput` | video buffers; input (`uinputd`) |
+| the other capabilities | process, network and file handling in init, zygote and netd |
 
 | Label | Default | |
 |---|---|---|
