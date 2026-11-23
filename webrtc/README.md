@@ -76,9 +76,10 @@ docker run -itd --cap-drop ALL \
   --cap-add SYS_PTRACE --cap-add SYS_NICE --cap-add SYS_RESOURCE --cap-add IPC_LOCK \
   --cap-add KILL --cap-add CHOWN --cap-add FOWNER --cap-add FSETID --cap-add DAC_OVERRIDE \
   --cap-add DAC_READ_SEARCH --cap-add SETUID --cap-add SETGID --cap-add SETPCAP \
-  --cap-add WAKE_ALARM --cap-add BLOCK_SUSPEND \
+  --cap-add WAKE_ALARM --cap-add BLOCK_SUSPEND --cap-add AUDIT_CONTROL --cap-add SYSLOG \
   --security-opt apparmor=unconfined -v /sys:/sys:rw \
-  --device /dev/dma_heap --device /dev/uinput --device-cgroup-rule 'c *:* rwm' \
+  --device /dev/dma_heap --device /dev/uinput --device /dev/fuse \
+  --device-cgroup-rule 'c *:* rwm' \
   --label redroid.webrtc=true --label redroid.webrtc.name=pixel \
   redroid/redroid:14.0.0_64only-latest
 ```
@@ -87,7 +88,9 @@ docker run -itd --cap-drop ALL \
 
 The redroid containers do not run with `--privileged`. These settings were
 found by starting from `--privileged` and removing one thing at a time, until
-the device stopped booting (Ubuntu 24.04, Android 14). Android's init mounts
+the device stopped booting or lost a feature (Ubuntu 24.04, Android 14; boot,
+logd, `/sdcard`, screen, touch, audio, microphone and the webcam were checked
+through a browser). Android's init mounts
 and configures the system itself, so the container is narrower than
 privileged but not unprivileged: it has no module loading, raw I/O, clock,
 reboot, mknod or audit rights, no other host devices, and keeps Docker's
@@ -99,7 +102,8 @@ default seccomp profile.
 | `apparmor=unconfined` | Docker's default profile blocks those mounts |
 | `/sys:/sys:rw` | init writes to sysfs |
 | `device-cgroup-rule c *:* rwm` | binderfs creates its devices at runtime |
-| `/dev/dma_heap`, `/dev/uinput` | video buffers; input (`uinputd`) |
+| `/dev/dma_heap`, `/dev/uinput`, `/dev/fuse` | video buffers; input (`uinputd`); `/sdcard` (without it the camera app crashes) |
+| `AUDIT_CONTROL`, `SYSLOG` | `logd` (without them logcat is dead) |
 | the other capabilities | process, network and file handling in init, zygote and netd |
 
 | Label | Default | |

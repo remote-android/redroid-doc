@@ -37,11 +37,14 @@ x-redroid: &redroid
     - SETPCAP
     - WAKE_ALARM
     - BLOCK_SUSPEND
+    - AUDIT_CONTROL # logd
+    - SYSLOG # logd
   security_opt:
     - apparmor=unconfined # Docker's profile blocks the mounts init does
   devices:
     - /dev/dma_heap:/dev/dma_heap
     - /dev/uinput:/dev/uinput
+    - /dev/fuse:/dev/fuse # /sdcard
   device_cgroup_rules:
     - "c *:* rwm" # binderfs creates its devices at runtime
   restart: unless-stopped
