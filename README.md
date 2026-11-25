@@ -177,6 +177,9 @@ Check [android-builder-docker](./android-builder-docker) for details.
 - Container disappeared immediately
 > make sure the required kernel modules are installed; run `dmesg -T` for detailed logs
 
+- Android reports the host's memory / CPU count instead of the container's limits (`--memory`, `--cpuset-cpus`)
+> see [lxcfs.md](lxcfs.md)
+
 - Container running, but adb cannot connect (device offline etc.)
 > run `docker exec -it <container> sh`, then check `ps -A` and `logcat`
 >
